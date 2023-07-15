@@ -1,0 +1,8 @@
+Model: Some Model
+    Plaintext description of this Model
+
+    Attack: This is an Attack
+        @wrong-place-for-tag
+        Given some precondition
+        When an attack is directed at user
+        Then user succumbs to attack

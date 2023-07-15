@@ -1,0 +1,40 @@
+Model: A sample model to analyze authentication options
+
+    As an attacker
+    I want to compromize authentication
+    So that I can masquerade as a legit user
+
+    As a defender
+    I want to secure authentication options
+    So that attacker cannot steal credentials
+    And masquerade as legit user
+
+    
+    Attack: Default password
+        Given target's default passwords are publicly known
+        When target uses default passwords
+        Then default passwords can be used to gain control of the target
+    @password
+    Attack: Commonly used password
+    @password
+    Attack: Password leak via rainbow tables
+    @password
+    Attack: Brute-force password guessing
+    @password
+    Attack: Reverse-hashing of password
+
+    # Source: 'Minimum Password Requirements' section in 'Authentication Standard' policy doc
+    @password
+    Policy: Minimum Password Requirements
+        Assumption: Password is required for login
+            Given system uses passwords for login
+            And system is unable to use any other authentication method
+        Defense: Password must be at least 8 characters long
+        Defense: Passwords must be changed upon first login
+            When target uses default passwords
+            And user logs in for the first time
+            Then user must be asked to change the password
+        Defense: Passwords must not contain common dictionary words
+        Defense: Passwords must not be reused across multiple systems
+        Defense: Passwords must not be stored using weak hashing algorithms
+        Defense: Passwords must be salted before storing

@@ -1,0 +1,44 @@
+Model: Extract access tokens
+ 	As an attacker
+ 	I want to extract access tokens
+ 	So that I can masquerade as the original client
+
+	As a defender
+ 	I want to secure access tokens
+ 	So that attacker cannot extract access tokens
+
+	@token-store
+	Attack: Compromize token storage
+	@token-store
+	Defense: Keep tokens only in transient memory
+	@token-store
+	Defense: Keep tokens only in private memory
+	@token-store
+	Defense: Apply same level of protection as refresh tokens to access tokens
+
+	@wide-scope-token
+	Attack: Exploit token with wider scope
+		Given a leaked access token
+		When access token is submitted
+		Then access with wider scope is obtained
+
+	@wide-scope-token
+	Defense: limit token scope
+ 		When a token is issued to a client
+ 		Then its access scope is limited to the minimum required rights for that client
+	@wide-scope-token
+	Defense: Configure token to expire after fixed period of no-use
+	 	When a token is issued to a client
+ 		And if client hasn't used it for a predefined period
+ 		Then revoke that token
+	@wide-scope-token
+	Defense: Limit token lifetime
+	 	When a token is issued to a client
+ 		Then restrict its lifetime to a fix number of max. uses
+	 	And limit max. use count to a sensible number.
+	@wide-scope-token
+	Defense: Don't issue token-clones
+	 	Given a token with specific rights is issued to a client
+ 		When that client requests a new token with same rights
+	 	Then invalidate previous token
+	 	And issue a new token

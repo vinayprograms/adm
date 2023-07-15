@@ -1,0 +1,18 @@
+Model: Security of refresh tokens
+ 	As an attacker
+ 	I want to steal refresh tokens
+ 	So that I can request new access tokens
+
+	As a defender
+ 	I want to secure refresh tokens
+ 	So that attacker cannot obtain access tokens
+
+	# Attack a client and copy refresh tokens
+	# Attack authorization server and obtain refresh tokens
+
+	Defense: Refresh token security on web-servers
+
+	Defense: Authenticate client
+	 	When a refresh token is sent from client
+ 		Then authenticate the client
+ 		And identify that client in the list of registered clients

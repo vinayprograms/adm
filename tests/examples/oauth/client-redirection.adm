@@ -1,0 +1,15 @@
+Model: User redirection to malicious domains
+ 	As an attacker
+ 	I want to redirect users to a domain under my control
+ 	So that I can steal authorization code from users during the redirection step of OAuth
+ 	As a defender
+ 	I want to restrict redirection only to approved list of domains
+ 	So that the attacker cannot redirect users to a domain their control
+
+	@redirection-uri
+	Attack: Partial URIs are considered valid
+	 	Given a registered redirection URI
+ 		When part of that URI is presented during redirection
+ 		Then requests are redirected to attacker's domain
+	@redirection-uri
+	Defense: Require clients to register full redirection URI and partial versions of these URIs must trigger a error response.

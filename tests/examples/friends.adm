@@ -1,0 +1,56 @@
+Model: Friends fight
+	As an attacker
+	I want to hide my cheat
+	So that I can maintain friendship with Bob
+
+	As a defender
+	I want to make sure my friends are honest
+	So that I can avoid being duped
+
+	Assumption: Adam and Bob are friends
+		Given Adam and Bob
+		And some trust exists between Adam and Bob
+
+	Attack: Adam doubts Bob
+		When Adam is not sure about Bob's honesty
+		Then Adam always looks for ways to cheat Bob
+
+	@success
+	Attack: Adam cheats Bob
+		Given Adam doesn't mind cheating Bob
+		"""markdown
+		Adam's first reason to cheat goes here
+		Adam's second reason to cheat goes here
+		"""
+		When Adam is not sure about Bob's honesty
+		Then Adam cheats Bob
+
+	Defense: Adam's cheating is caught
+		When Adam cheats Bob
+		Then Bob confronts Adam
+
+	Attack: Adam hides the cheat
+		When Bob confronts Adam
+		Then Adam cooks-up a story to convince Bob
+
+	Defense: Bob tries to verify Adam's story
+		When Adam cooks-up a story to convince Bob
+		Then Bob asks probing questions to Adam
+		"""markdown
+		Bob's first question goes here
+		Bob's second question goes here
+		"""
+
+	# Incomplete attack
+	Attack: Adam has cheated before
+
+	# Incomplete defense
+	Defense: Bob has been confrontational in the past
+
+	Policy: Honesty is the best policy
+		Assumption: Adam and Bob are generally honest
+			Given Adam and Bob are good people
+			And Adam and Bob have a history of being honest with each other
+		Defense: Test honesty
+			When Adam is not sure about Bob's honesty
+			Then Adam must test Bob's honesty

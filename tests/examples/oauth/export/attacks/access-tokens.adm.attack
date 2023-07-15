@@ -1,0 +1,11 @@
+Feature: Extract access tokens
+  As a attacker
+  I want to extract access tokens
+  So that I can masquerade as the original client
+  @token-store
+  Scenario: Compromize token storage
+  @wide-scope-token
+  Scenario: Exploit token with wider scope
+    Given a leaked access token
+    When access token is submitted
+    Then access with wider scope is obtained

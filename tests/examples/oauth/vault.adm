@@ -1,0 +1,4 @@
+Model: Attack vault that stores decryption keys
+ 	As an attacker
+ 	I want to gain access to vault
+ 	So that I can extract all secrets and keys used by the application
