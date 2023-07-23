@@ -12,7 +12,7 @@ TEST_PACKAGES := "args,sources,libadm/loaders,libadm/model,libadm/graph,libadm/g
 help: # Show this help
 	@egrep -h '\s#\s' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?# "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-all: test build clean
+all: test build
 
 build: # Build program
 	@echo -n "Checking if './bin' directory exists..."
