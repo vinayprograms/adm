@@ -1,9 +1,0 @@
-Feature: User redirection to malicious domains
-  As a attacker
-  I want to redirect users to a domain under my control
-  So that I can steal authorization code from users during the redirection step of OAuth
-  @redirection-uri
-  Scenario: Partial URIs are considered valid
-    Given a registered redirection URI
-    When part of that URI is presented during redirection
-    Then requests are redirected to attacker's domain
