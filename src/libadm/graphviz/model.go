@@ -102,7 +102,7 @@ func getPolicySubgraphs(policies map[string]*model.Policy, config GraphvizConfig
 		assumptionIDs := make(map[string]string) 
 		for id, object := range p.Assumptions {
 			for preID := range object.PreConditions {
-				assumptionIDs[generateID(id)] = generateID(preID)
+				assumptionIDs["cluster_" + generateID(id)] = generateID(preID)
 				break
 			}
 		}
