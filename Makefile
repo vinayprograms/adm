@@ -45,10 +45,10 @@ report: # Coverage report (after `make tests`)
 
 clean: # Clean all build/test artifacts.
 	@echo "Removing build/test artifacts..."
-	-rm $(BIN_DIR)/$(BINARY)
-	-rm $(BIN_DIR)/graphviz.svg
-	-rm $(BIN_DIR)/export/*.attack
-	-rm $(BIN_DIR)/export/*.feature
-	-rmdir $(BIN_DIR)/export
-	-rmdir $(BIN_DIR)
+	@rm -f $(BIN_DIR)/$(BINARY)
+	@rm -f $(BIN_DIR)/graphviz.svg
+	@rm -f $(BIN_DIR)/export/*.attack
+	@rm -f $(BIN_DIR)/export/*.feature
+	@rm -rf $(BIN_DIR)/export
+	@rm -rf $(BIN_DIR)
 	@echo "DONE"
