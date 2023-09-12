@@ -37,21 +37,34 @@ func parseActors(specification string) (actors []*ModelActor) {
 	var currentActor *ModelActor
 	var currentClauseType string
 	for _, line := range lines {
-		if (strings.Contains(line, "As an attacker")) {
+		if strings.Contains(strings.ToLower(line), "as an attacker") ||
+			strings.Contains(strings.ToLower(line), "as a attacker") {
 			p := ModelActor{Actor: Attacker}
 			actors = append(actors, &p)
 			currentActor = &p
-		} else if (strings.Contains(line, "As a defender")) {
+		} else if strings.Contains(strings.ToLower(line), "as a defender") {
 			p := ModelActor{Actor: Defender}
 			actors = append(actors, &p)
 			currentActor = &p
-		} else if (strings.Contains(line, "I want to")) {
+		} else if strings.Contains(strings.ToLower(line), "i want to") {
 			currentClauseType = "intent"
+			if currentActor == nil {
+				fmt.Println("ERROR: No actor identified for the clause - \"", line, "\"")
+				break
+			}
 			currentActor.Intents = append(currentActor.Intents, strings.TrimSpace(line))
-		} else if (strings.Contains(line, "So that")) {
+		} else if strings.Contains(strings.ToLower(line), "so that") {
 			currentClauseType = "purpose"
+			if currentActor == nil {
+				fmt.Println("ERROR: No actor identified for the clause - \"", line, "\"")
+				break
+			}
 			currentActor.Purposes = append(currentActor.Purposes, strings.TrimSpace(line))
-		} else if (strings.Contains(line, "And")) {
+		} else if strings.Contains(strings.ToLower(line), "and") {
+			if currentActor == nil {
+				fmt.Println("ERROR: No actor identified for the clause - \"", line, "\"")
+				break
+			}
 			switch currentClauseType {
 			case "intent":
 				currentActor.Intents = append(currentActor.Intents, strings.TrimSpace(line))
