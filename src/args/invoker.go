@@ -6,11 +6,12 @@ import (
 	"libadm/graph"
 	"libadm/loaders"
 	"libadm/model"
+	"log"
 	"sources"
 	"strings"
 )
 
-func statsInvoker(attacksOnly bool, defensesOnly bool, preemtiveDefensesOnly bool,  incResponsesOnly bool, path string) error {
+func statsInvoker(attacksOnly bool, defensesOnly bool, preemtiveDefensesOnly bool, incResponsesOnly bool, path string) error {
 	src := sources.GetSource(path)
 	if src == nil {
 		return errors.New("cannot identify the source for path '" + path + "'")
@@ -23,7 +24,9 @@ func statsInvoker(attacksOnly bool, defensesOnly bool, preemtiveDefensesOnly boo
 
 	for _, modelText := range models {
 		gherkin, err := loaders.LoadGherkinContent(modelText)
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 		var model model.Model
 		model.Init(gherkin.Feature)
 
@@ -35,7 +38,7 @@ func statsInvoker(attacksOnly bool, defensesOnly bool, preemtiveDefensesOnly boo
 			if err != nil {
 				return err
 			}
-		} 
+		}
 
 		if defensesOnly {
 			err := defenseSummaryCommand{model: &model}.execute()
@@ -51,7 +54,7 @@ func statsInvoker(attacksOnly bool, defensesOnly bool, preemtiveDefensesOnly boo
 			}
 		}
 
-		if incResponsesOnly  && !defensesOnly {
+		if incResponsesOnly && !defensesOnly {
 			err := incidentResponseSummaryCommand{model: &model}.execute()
 			if err != nil {
 				return err
@@ -69,18 +72,18 @@ func graphInvoker(outputPath string, path string) error {
 	if src == nil {
 		return errors.New("cannot identify the source for path '" + path + "'")
 	}
-	
+
 	g, err := getAdmGraph(src, path)
 	if err != nil {
 		return err
 	}
 
 	cmd := graphvizCommand{admGraph: g, outputPath: outputPath, destination: sources.LocalSource{}}
-	
+
 	return cmd.execute()
 }
 
-func exportInvoker(attacksOnly bool, defensesOnly bool, /*format string,*/ outputPath string, path string) error {
+func exportInvoker(attacksOnly bool, defensesOnly bool /*format string,*/, outputPath string, path string) error {
 	src := sources.GetSource(path)
 	if src == nil {
 		return errors.New("cannot identify the source for path '" + path + "'")
@@ -94,21 +97,25 @@ func exportInvoker(attacksOnly bool, defensesOnly bool, /*format string,*/ outpu
 	//var cmd command
 	//switch format {
 	//case "gherkin":
-		if attacksOnly {
-			return gauntltCommand{contentSource: src, path: outputPath, models: admModels}.execute()
-		} else if defensesOnly {
-			return gherkinCommand{contentSource: src, path: outputPath, models: admModels}.execute()
-		} else {
-			err := gauntltCommand{contentSource: src, path: outputPath, models: admModels}.execute()
-			if err != nil { return err}
-			err = gherkinCommand{contentSource: src, path: outputPath, models: admModels}.execute()
-			if err != nil { return err}
+	if attacksOnly {
+		return gauntltCommand{contentSource: src, path: outputPath, models: admModels}.execute()
+	} else if defensesOnly {
+		return gherkinCommand{contentSource: src, path: outputPath, models: admModels}.execute()
+	} else {
+		err := gauntltCommand{contentSource: src, path: outputPath, models: admModels}.execute()
+		if err != nil {
+			return err
 		}
+		err = gherkinCommand{contentSource: src, path: outputPath, models: admModels}.execute()
+		if err != nil {
+			return err
+		}
+	}
 	/*case "deci":
 		cmd = deciduousCommand{
-			contentSource: src, 
-			includeAttacks: attacksOnly, 
-			includeDefenses: defensesOnly, 
+			contentSource: src,
+			includeAttacks: attacksOnly,
+			includeDefenses: defensesOnly,
 			path: outputPath,
 			models: admModels}
 		return cmd.execute()
@@ -132,7 +139,7 @@ func generateSeparator(length int) (separator string) {
 func getAdmGraph(source sources.Source, path string) (graph.Graph, error) {
 	var graph graph.Graph
 	graph.Init()
-	
+
 	models, err := getAdmModels(source, path)
 	if err != nil {
 		return graph, err
@@ -151,22 +158,22 @@ func getAdmModels(source sources.Source, path string) (map[string]*model.Model, 
 	models := make(map[string]*model.Model)
 	modelContents, err := getContent(source, path)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Print(err.Error())
 		return nil, err
 	}
 	for fileName, modelText := range modelContents {
 		gherkin, err := loaders.LoadGherkinContent(modelText)
-		if err != nil { 
-			fmt.Println(err.Error())
-			fmt.Println("Skipping processing of " + fileName)
+		if err != nil {
+			log.Print(err.Error())
+			log.Print("Skipping processing of " + fileName)
 			models[fileName] = nil
 			continue
 		}
 		var model model.Model
 		err = model.Init(gherkin.Feature)
-		if err != nil { 
-			fmt.Println(err.Error())
-			fmt.Println("Skipping processing of " + fileName)
+		if err != nil {
+			log.Print(err.Error())
+			log.Print("Skipping processing of " + fileName)
 			models[fileName] = nil
 			continue
 
@@ -185,7 +192,7 @@ func getContent(source sources.Source, path string) (map[string]string, error) {
 		return nil, err
 	}
 	if len(files) > 0 {
-		fmt.Println("Found", len(files), "file(s)")
+		log.Print("Found", len(files), "file(s)")
 	}
 	for _, file := range files {
 		newContent, err := source.GetContent(file)
@@ -200,5 +207,5 @@ func getContent(source sources.Source, path string) (map[string]string, error) {
 
 func getFileName(path string) string {
 	parts := strings.Split(path, "/")
-	return parts[len(parts) - 1]
+	return parts[len(parts)-1]
 }
