@@ -15,7 +15,7 @@ func TestActor(t *testing.T) {
 	So that I can use it for malicious purposes
 	And extort the target
 	`
-	
+
 	var Actor model.ModelActor
 	Actor.ParseAndInit(input)
 
@@ -36,7 +36,7 @@ func TestWith2Actors(t *testing.T) {
 	I want to secure the target
 	So that it can only be used for legit purposes
 	`
-	
+
 	var Actor model.ModelActor
 	Actor.ParseAndInit(input)
 

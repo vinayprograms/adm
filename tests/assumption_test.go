@@ -110,15 +110,15 @@ func TestAssumption_Full(t *testing.T) {
 
 func TestParseArgs(t *testing.T) {
 	testVectors := map[string][]string{ // The last item in args list is the expected value
-		"EmptyFile":                   {"stat", "./examples/basic/emptyfile.adm", "Found 1 file(s)"},
-		"OneFile":                     {"stat", "./examples/oauth/access-tokens.adm", "Found 1 file(s)"},
-		"MultiFile":                   {"stat", "./examples/oauth", "Found 7 file(s)"},
-		"PathHierarchy":               {"stat", "./examples/subdirs", "Found 4 file(s)"},
-		"PathToADMFile":               {"stat", "./examples/oauth/access-tokens.adm", "Found 1 file(s)"},
-		"NonADMFile":                  {"stat", "./examples/noADMFile", ""},
-		"PathAndAttackFlag":           {"stat", "-a", "./examples/oauth/access-tokens.adm", "Found 1 file(s)"},
-		"PathAndDefenseFlag":          {"stat", "-d", "./examples/oauth/access-tokens.adm", "Found 1 file(s)"},
-		"PathAndMultipleAttackFlags":  {"stat", "-a", "-a", "./examples/oauth/access-tokens.adm", "Found 1 file(s)"},
+		"EmptyFile":                  {"stat", "./examples/basic/emptyfile.adm", "Found 1 file(s)"},
+		"OneFile":                    {"stat", "./examples/oauth/access-tokens.adm", "Found 1 file(s)"},
+		"MultiFile":                  {"stat", "./examples/oauth", "Found 7 file(s)"},
+		"PathHierarchy":              {"stat", "./examples/subdirs", "Found 4 file(s)"},
+		"PathToADMFile":              {"stat", "./examples/oauth/access-tokens.adm", "Found 1 file(s)"},
+		"NonADMFile":                 {"stat", "./examples/noADMFile", ""},
+		"PathAndAttackFlag":          {"stat", "-a", "./examples/oauth/access-tokens.adm", "Found 1 file(s)"},
+		"PathAndDefenseFlag":         {"stat", "-d", "./examples/oauth/access-tokens.adm", "Found 1 file(s)"},
+		"PathAndMultipleAttackFlags": {"stat", "-a", "-a", "./examples/oauth/access-tokens.adm", "Found 1 file(s)"},
 	}
 
 	for name, args := range testVectors {
@@ -136,7 +136,7 @@ func TestParseArgs(t *testing.T) {
 			out = strings.Split(out, "\n")[1]
 			fmt.Println(out)
 
-			if err != nil {	// We don't expect explicit errors in these set of tests
+			if err != nil { // We don't expect explicit errors in these set of tests
 				t.Error("ERROR:", err)
 			}
 

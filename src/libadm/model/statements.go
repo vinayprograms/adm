@@ -7,16 +7,16 @@ import (
 )
 
 type Step struct {
-	Keyword string
-	Statement string
-	DocString string
+	Keyword       string
+	Statement     string
+	DocString     string
 	DocStringType string
-	DataTable *DataTable
+	DataTable     *DataTable
 }
 
 type DataTable struct {
 	Heads []string
-	Rows [][]string
+	Rows  [][]string
 }
 
 func (s *Step) Init(step *messages.Step) error {

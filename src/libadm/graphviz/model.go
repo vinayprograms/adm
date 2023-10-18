@@ -9,10 +9,10 @@ import (
 
 func BuildModelSubGraph(model *model.Model, config GraphvizConfig) (modelSubgraph subgraph) {
 	modelProperties := NodeProperties{
-		Font: TextProperties{ FontName: "Arial", FontSize: "24"},
+		Font:  TextProperties{FontName: "Arial", FontSize: "24"},
 		Color: ColorSet{FontColor: "black", FillColor: "transparent", BorderColor: "gray"},
 	}
-	
+
 	modelSubgraph.Init(model.Title, modelProperties, 1) // setup model subgraph
 
 	//////////
@@ -70,7 +70,7 @@ func BuildModelSubGraph(model *model.Model, config GraphvizConfig) (modelSubgrap
 			}
 		}
 	}
-	
+
 	return
 }
 
@@ -84,12 +84,15 @@ func getAssumptionSubgraphs(assumptions map[string]*model.Assumption, config Gra
 	// because graphviz doesn't let us specify edge directly to cluster. Instead,
 	// we must link to one of its internal node, and append 'ltail' property
 	// to that edge to make graphviz connect things to the cluster. :(
-	assumptionIDs = make(map[string]string) 
+	assumptionIDs = make(map[string]string)
 
 	for _, a := range assumptions {
 		sg := BuildAssumptionSubgraph(a, config)
-		var key string; for key = range a.PreConditions {break}
-		assumptionIDs["cluster_" + generateID(sg.label)] = generateID(key)
+		var key string
+		for key = range a.PreConditions {
+			break
+		}
+		assumptionIDs["cluster_"+generateID(sg.label)] = generateID(key)
 		sg.tabSpaceCount = 2 // Since the builder doesn't set it.
 		subgraphs = append(subgraphs, sg)
 	}
@@ -99,15 +102,17 @@ func getAssumptionSubgraphs(assumptions map[string]*model.Assumption, config Gra
 func getPolicySubgraphs(policies map[string]*model.Policy, config GraphvizConfig) (subgraphs []subgraph) {
 	for _, p := range policies {
 		sg := BuildPolicySubgraph(p, config)
-		assumptionIDs := make(map[string]string) 
+		assumptionIDs := make(map[string]string)
 		for id, object := range p.Assumptions {
 			for preID := range object.PreConditions {
-				assumptionIDs["cluster_" + generateID(id)] = generateID(preID)
+				assumptionIDs["cluster_"+generateID(id)] = generateID(preID)
 				break
 			}
 		}
 		_, edges, _ := getDefenses(p.Defenses, assumptionIDs, config)
-		for key, value := range edges { sg.Edges[key] = value }
+		for key, value := range edges {
+			sg.Edges[key] = value
+		}
 		sg.tabSpaceCount = 2 // Since the builder doesn't set it.
 		subgraphs = append(subgraphs, sg)
 	}
@@ -127,7 +132,6 @@ func getAttacks(attacks map[string]*model.Attack, assumptionIDs map[string]strin
 		}
 		preConditions = append(preConditions, attackPreConditions...)
 
-
 		if len(a.PreConditions) == 0 { // if attacks have no preconditions
 			// does any action point to a defense
 			doesThwartDefense := false
@@ -137,13 +141,13 @@ func getAttacks(attacks map[string]*model.Attack, assumptionIDs map[string]strin
 					break
 				}
 			}
-			 // if attack doesn't succeed a defense and if there are no assumptions, connect attack to 'reality'
-			if !doesThwartDefense  && len(assumptionIDs) == 0 {
+			// if attack doesn't succeed a defense and if there are no assumptions, connect attack to 'reality'
+			if !doesThwartDefense && len(assumptionIDs) == 0 {
 				connectAndAppend(edges, "reality", generateID(a.Title), "")
 			}
 		}
 		for id, nodeKey := range assumptionIDs {
-			connectAndAppend(edges, nodeKey, generateID(a.Title), "ltail=" + id)
+			connectAndAppend(edges, nodeKey, generateID(a.Title), "ltail="+id)
 		}
 		for _, pre := range a.PreConditions {
 			if pre.Item == nil {
@@ -173,7 +177,7 @@ func getDefenses(defenses map[string]*model.Defense, assumptionIDs map[string]st
 
 	for _, d := range defenses {
 		ac, defensePreConditions := GetDefenseCode(d, config)
-		
+
 		//////////
 		// add nodes
 		for id, properties := range ac {
@@ -185,8 +189,8 @@ func getDefenses(defenses map[string]*model.Defense, assumptionIDs map[string]st
 
 		////////////////////
 		// add edges
-		fomosecProperties := createProperty("label", "#fomosec", false) 
-		fomosecProperties += createProperty("penwidth", "2", false) 
+		fomosecProperties := createProperty("label", "#fomosec", false)
+		fomosecProperties += createProperty("penwidth", "2", false)
 		fomosecProperties += createProperty("color", "red", false)
 		fomosecProperties += createProperty("fontname", config.Subgraph.FontName, false)
 		fomosecProperties += createProperty("fontcolor", "red", false)
@@ -196,7 +200,7 @@ func getDefenses(defenses map[string]*model.Defense, assumptionIDs map[string]st
 			continue
 		}
 		for id, nodeKey := range assumptionIDs { // link all defenses to model's assumption
-			connectAndAppend(edges, nodeKey, generateID(d.Title), "ltail=" + id)
+			connectAndAppend(edges, nodeKey, generateID(d.Title), "ltail="+id)
 		}
 		for _, pre := range d.PreConditions { // link defense precondition to defense node
 			if pre.Item == nil { // if it is just a precondition clause
@@ -212,7 +216,7 @@ func getDefenses(defenses map[string]*model.Defense, assumptionIDs map[string]st
 				}
 			}
 		}
-		for _, action := range d.Actions { 
+		for _, action := range d.Actions {
 			if action.Item != nil { // if action points to another attack/defense
 				for _, item := range action.Item {
 					connectAndAppend(edges, generateID(item.Title), generateID(d.Title), "")

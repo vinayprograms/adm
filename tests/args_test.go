@@ -12,7 +12,6 @@ import (
 /////////////////////////////////////////////////
 // Unit tests
 
-
 func TestShowHelp(t *testing.T) {
 
 	parser := args.Args{}
@@ -33,7 +32,7 @@ func TestShowHelp(t *testing.T) {
 			"  -a	List attacks\n" +
 			"  -d	List all defenses\n" +
 			"  -i	List defenses (incident-response only). Ignored if -d is present.\n" +
-			"  -p	List defenses (pre-emtive only). Ignored if -d is present.\n" + 
+			"  -p	List defenses (pre-emtive only). Ignored if -d is present.\n" +
 			"\n" +
 			"Sub-command: graph\n" +
 			"Generate a decision graph from one or more ADM files\n" +
@@ -58,26 +57,26 @@ func TestUninitializedArgsStruct_ShowHelp(t *testing.T) {
 	parser.ParseArgs([]string{})
 	out, _ := harness.ReadAndRelease()
 	expected :=
-	"Usage: adm [OPTIONS] [PATH]\n" +
-	"\n[PATH]: The path to a directory or a single ADM file\n" +
-	"\nSub-command: stat\n" +
-	"List titles of all model components\n" +
-	"  -a	List attacks\n" +
-	"  -d	List all defenses\n" +
-	"  -i	List defenses (incident-response only). Ignored if -d is present.\n" +
-	"  -p	List defenses (pre-emtive only). Ignored if -d is present.\n" + 
-	"\n" +
-	"Sub-command: graph\n" +
-	"Generate a decision graph from one or more ADM files\n" +
-	"  -o string\n" +
-	"    	Output path for graphviz(dot) file (default \"./graphviz.dot\")\n" +
-	"\n" +
-	"Sub-command: export\n" +
-	"Export ADM files to other formats\n" +
-	"  -a	Export attacks only\n" +
-	"  -d	Export defenses only\n" +
-	"  -o string\n" +
-	"    	Export path (default \"./\")\n"
+		"Usage: adm [OPTIONS] [PATH]\n" +
+			"\n[PATH]: The path to a directory or a single ADM file\n" +
+			"\nSub-command: stat\n" +
+			"List titles of all model components\n" +
+			"  -a	List attacks\n" +
+			"  -d	List all defenses\n" +
+			"  -i	List defenses (incident-response only). Ignored if -d is present.\n" +
+			"  -p	List defenses (pre-emtive only). Ignored if -d is present.\n" +
+			"\n" +
+			"Sub-command: graph\n" +
+			"Generate a decision graph from one or more ADM files\n" +
+			"  -o string\n" +
+			"    	Output path for graphviz(dot) file (default \"./graphviz.dot\")\n" +
+			"\n" +
+			"Sub-command: export\n" +
+			"Export ADM files to other formats\n" +
+			"  -a	Export attacks only\n" +
+			"  -d	Export defenses only\n" +
+			"  -o string\n" +
+			"    	Export path (default \"./\")\n"
 
 	assert.Equal(t, out, expected)
 }
@@ -90,9 +89,9 @@ func TestParseArgsWithoutSubCommand(t *testing.T) {
 
 func TestParseArgs_MissingParams(t *testing.T) {
 	testVectors := map[string][]string{ // The last item in args list is the expected value
-		"StatsInvoke":					{"stat", "require atleast two parameters - 'sub-command' and 'path'"},
-		"graphInvoke":					{"graph", "require atleast two parameters - 'sub-command' and 'path'"},
-		"exportInvoke":					{"export", "require atleast two parameters - 'sub-command' and 'path'"},
+		"StatsInvoke":  {"stat", "require atleast two parameters - 'sub-command' and 'path'"},
+		"graphInvoke":  {"graph", "require atleast two parameters - 'sub-command' and 'path'"},
+		"exportInvoke": {"export", "require atleast two parameters - 'sub-command' and 'path'"},
 	}
 
 	for name, args := range testVectors {
@@ -121,7 +120,7 @@ func TestParseArgs_MissingParams(t *testing.T) {
 // TODO: Find a better way to test os.Exit scenarios.
 /*
 func TestParseArgsWithoutPathAndOnlyFlags_graph(t *testing.T) {
-	
+
 	testVectors := map[string][]string{ // The last item in args list is the expected value
 		"graphInvoke":								{"graph", "-f", "dot", "-p", "cannot identify the source for path '-p'"},
 		"graphInvokeWithoutOptions":	{"graph", "-f", "-p", "cannot identify the source for path '-p'"},
@@ -156,9 +155,9 @@ func TestParseArgsWithPathAndWrongFlag(t *testing.T) {
 
 func TestParseArgsWithUnsupportedPath(t *testing.T) {
 	testVectors := map[string][]string{ // The last item in args list is the expected value
-		"Stats":					{"stat", "dummy://dummy.dummy/test.adm", "cannot identify the source for path 'dummy://dummy.dummy/test.adm'"},
-		"Graph":					{"graph", "dummy://dummy.dummy/test.adm", "cannot identify the source for path 'dummy://dummy.dummy/test.adm'"},
-		"Export":					{"export", "dummy://dummy.dummy/test.adm", "cannot identify the source for path 'dummy://dummy.dummy/test.adm'"},
+		"Stats":  {"stat", "dummy://dummy.dummy/test.adm", "cannot identify the source for path 'dummy://dummy.dummy/test.adm'"},
+		"Graph":  {"graph", "dummy://dummy.dummy/test.adm", "cannot identify the source for path 'dummy://dummy.dummy/test.adm'"},
+		"Export": {"export", "dummy://dummy.dummy/test.adm", "cannot identify the source for path 'dummy://dummy.dummy/test.adm'"},
 	}
 
 	for name, args := range testVectors {
@@ -174,11 +173,11 @@ func TestParseArgsWithUnsupportedPath(t *testing.T) {
 
 func TestParseArgsWithValidPath(t *testing.T) {
 	testVectors := map[string][]string{ // The last item in args list is the expected value
-		"Stats":					{"stat", "examples/friends.adm"},
-		"Graph":					{"graph", "examples/friends.adm"},
-		"Export":					{"export", "examples/friends.adm"},
-		"ExportAttacks":	{"export", "-a", "examples/friends.adm"},
-		"ExportDefenses":	{"export", "-d", "examples/friends.adm"},
+		"Stats":          {"stat", "examples/friends.adm"},
+		"Graph":          {"graph", "examples/friends.adm"},
+		"Export":         {"export", "examples/friends.adm"},
+		"ExportAttacks":  {"export", "-a", "examples/friends.adm"},
+		"ExportDefenses": {"export", "-d", "examples/friends.adm"},
 		//"ExportDeciduous":{"export", "-f", "deci", "examples/friends.adm"},
 	}
 

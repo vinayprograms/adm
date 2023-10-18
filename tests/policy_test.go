@@ -76,23 +76,23 @@ func TestPolicy_Full(t *testing.T) {
 }
 
 func TestPolicy_Duplicates(t *testing.T) {
-	testVectors := map[string][]string {
-	"SameAssumption": {`Model: Model with duplicates
+	testVectors := map[string][]string{
+		"SameAssumption": {`Model: Model with duplicates
 		Policy: Honesty is the best policy
 			Assumption: Don't assume everything
 				Given a lot of assumptions
 			Assumption: Don't assume everything
 				Given a lot of assumptions
-	`,"Parser errors:\n(5:4): expected: #EOF, #TableRow, #DocStringSeparator, #StepLine, #TagLine, #ScenarioLine, #RuleLine, #Comment, #Empty, got '\t\t\tAssumption: Don't assume everything'"},
-	"SameDefense": {`Model: Model with duplicates
+	`, "Parser errors:\n(5:4): expected: #EOF, #TableRow, #DocStringSeparator, #StepLine, #TagLine, #ScenarioLine, #RuleLine, #Comment, #Empty, got '\t\t\tAssumption: Don't assume everything'"},
+		"SameDefense": {`Model: Model with duplicates
 		Policy: Honesty is the best policy
 			Defense: We must defend our systems
 			Defense: We must defend our systems
-	`,"defense - 'We must defend our systems' is already part of this model"},
+	`, "defense - 'We must defend our systems' is already part of this model"},
 	}
 
 	for name, args := range testVectors {
-		t.Run(name, func(t *testing.T){
+		t.Run(name, func(t *testing.T) {
 			input := args[0]
 			expected := args[1]
 			gherkinModel, err := loaders.LoadGherkinContent(input)
@@ -100,7 +100,7 @@ func TestPolicy_Duplicates(t *testing.T) {
 				if name == "SameAssumption" {
 					assert.Equal(t, expected, err.Error())
 					return
-				}else {
+				} else {
 					t.Error(err)
 				}
 			}
@@ -112,16 +112,16 @@ func TestPolicy_Duplicates(t *testing.T) {
 		})
 	}
 
-	// Specific test to check when same assumption structure is 
+	// Specific test to check when same assumption structure is
 	// passed twice to the policy
-	p := messages.Rule {
+	p := messages.Rule{
 		Keyword: "Model",
-		Name: "Policy with duplicate Assumptions",
+		Name:    "Policy with duplicate Assumptions",
 	}
 	p.Children = append(p.Children, &messages.RuleChild{
-		Background: &messages.Background {
+		Background: &messages.Background{
 			Keyword: "Assumption",
-			Name: "Don't assume everything",
+			Name:    "Don't assume everything",
 		},
 	})
 	var policy model.Policy

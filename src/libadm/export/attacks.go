@@ -23,9 +23,9 @@ func ExportAttacks(model *model.Model) (lines []string) {
 
 func generateAttackLines(attack *model.Attack) (lines []string) {
 	if len(attack.Tags) > 0 {
-		lines = append(lines, genrateTabs(1) + strings.Join(attack.Tags, " "))
+		lines = append(lines, genrateTabs(1)+strings.Join(attack.Tags, " "))
 	}
-	lines = append(lines, genrateTabs(1) + "Scenario: " + attack.Title)
+	lines = append(lines, genrateTabs(1)+"Scenario: "+attack.Title)
 	lines = append(lines, generatePreConditionLinesForAttacks(attack.PreConditions)...)
 	lines = append(lines, generateActionLinesForAttacks(attack.Actions)...)
 	lines = append(lines, generateResultLines(attack.Results)...)

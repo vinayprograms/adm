@@ -26,9 +26,9 @@ func generateDefenseLines(defense *model.Defense) (lines []string) {
 		for tag := range defense.Tags {
 			tagLine += tag + " "
 		}
-		lines = append(lines, genrateTabs(1) + tagLine)
+		lines = append(lines, genrateTabs(1)+tagLine)
 	}
-	lines = append(lines, genrateTabs(1) + "Scenario: " + defense.Title)
+	lines = append(lines, genrateTabs(1)+"Scenario: "+defense.Title)
 	lines = append(lines, generatePreConditionLinesForDefenses(defense.PreConditions)...)
 	lines = append(lines, generateActionLinesForDefenses(defense.Actions)...)
 	lines = append(lines, generateResultLines(defense.Results)...)

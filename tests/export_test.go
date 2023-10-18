@@ -22,9 +22,9 @@ func TestExportWithMissingFile(t *testing.T) {
 func TestExportWithFaultyADMSpec(t *testing.T) { // This should print errors to STDOUT.
 	harness := output_interceptor{}
 	harness.Hook()
-	err := sendToParseArgs([]string{"export", "-o", "./examples/", "./examples/basic/faulty-admspec.adm"}) 
+	err := sendToParseArgs([]string{"export", "-o", "./examples/", "./examples/basic/faulty-admspec.adm"})
 	out, _ := harness.ReadAndRelease()
-	
+
 	assert.Nil(t, err)
 	assert.Contains(t, out, "Skipping processing of faulty-admspec.adm")
 	assert.Contains(t, out, "Failed loading model for faulty-admspec.adm")

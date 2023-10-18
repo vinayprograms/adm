@@ -9,10 +9,10 @@ import (
 
 // This is the client in 'Command' pattern implementation
 type Args struct {
-	statCmd			*flag.FlagSet
-	graphCmd   		*flag.FlagSet
-	exportCmd  		*flag.FlagSet
-	path      		string
+	statCmd   *flag.FlagSet
+	graphCmd  *flag.FlagSet
+	exportCmd *flag.FlagSet
+	path      string
 }
 
 func (a *Args) InitArgs() {
@@ -65,7 +65,7 @@ func (a *Args) ParseArgs(args []string) error {
 		return errors.New("require atleast two parameters - 'sub-command' and 'path'")
 	}
 
-	a.path = args[len(args)-1]	// Path must always be the last parameter
+	a.path = args[len(args)-1] // Path must always be the last parameter
 
 	// Process the remaining arguments.
 	switch args[0] {
@@ -74,10 +74,10 @@ func (a *Args) ParseArgs(args []string) error {
 		if err != nil {
 			return err
 		}
-		aFlag,_ := strconv.ParseBool(a.statCmd.Lookup("a").Value.String())
-		dFlag,_ := strconv.ParseBool(a.statCmd.Lookup("d").Value.String())
-		pdFlag,_ := strconv.ParseBool(a.statCmd.Lookup("p").Value.String())
-		irFlag,_ := strconv.ParseBool(a.statCmd.Lookup("i").Value.String())
+		aFlag, _ := strconv.ParseBool(a.statCmd.Lookup("a").Value.String())
+		dFlag, _ := strconv.ParseBool(a.statCmd.Lookup("d").Value.String())
+		pdFlag, _ := strconv.ParseBool(a.statCmd.Lookup("p").Value.String())
+		irFlag, _ := strconv.ParseBool(a.statCmd.Lookup("i").Value.String())
 		if !(aFlag || dFlag || pdFlag || irFlag) { // if all flags are skipped, assume -a and -d are true
 			aFlag = true
 			dFlag = true
@@ -89,15 +89,15 @@ func (a *Args) ParseArgs(args []string) error {
 			return err
 		}
 		return graphInvoker(a.graphCmd.Lookup("o").Value.String(), a.path)
-		
+
 	case "export":
 		err := a.exportCmd.Parse(args[1:])
 		if err != nil {
 			return err
 		}
-		aFlag,_ := strconv.ParseBool(a.exportCmd.Lookup("a").Value.String())
-		dFlag,_ := strconv.ParseBool(a.exportCmd.Lookup("d").Value.String())
-		return exportInvoker(aFlag, dFlag, /*a.exportCmd.Lookup("f").Value.String(),*/ a.exportCmd.Lookup("o").Value.String(), a.path)
+		aFlag, _ := strconv.ParseBool(a.exportCmd.Lookup("a").Value.String())
+		dFlag, _ := strconv.ParseBool(a.exportCmd.Lookup("d").Value.String())
+		return exportInvoker(aFlag, dFlag /*a.exportCmd.Lookup("f").Value.String(),*/, a.exportCmd.Lookup("o").Value.String(), a.path)
 
 	default:
 		return errors.New("INVALID ARGUMENT - \"" + args[0] + "\"")

@@ -8,13 +8,13 @@ import (
 
 type Model struct {
 	Title string
-	Tags []string
+	Tags  []string
 
-	Actors []*ModelActor
+	Actors      []*ModelActor
 	Assumptions map[string]*Assumption
-	Policies map[string]*Policy
-	Attacks map[string]*Attack
-	Defenses map[string]*Defense
+	Policies    map[string]*Policy
+	Attacks     map[string]*Attack
+	Defenses    map[string]*Defense
 }
 
 func (m *Model) Init(f *messages.Feature) error {
@@ -23,10 +23,18 @@ func (m *Model) Init(f *messages.Feature) error {
 		return errors.New("cannot initialize a null model object")
 	}
 
-	if m.Assumptions == nil		{ m.Assumptions = make(map[string]*Assumption) }
-	if m.Policies == nil 			{ m.Policies = make(map[string]*Policy) }
-	if m.Attacks == nil 			{ m.Attacks = make(map[string]*Attack) }
-	if m.Defenses == nil 			{ m.Defenses = make(map[string]*Defense) }
+	if m.Assumptions == nil {
+		m.Assumptions = make(map[string]*Assumption)
+	}
+	if m.Policies == nil {
+		m.Policies = make(map[string]*Policy)
+	}
+	if m.Attacks == nil {
+		m.Attacks = make(map[string]*Attack)
+	}
+	if m.Defenses == nil {
+		m.Defenses = make(map[string]*Defense)
+	}
 
 	// Process gherkin content
 	m.Title = f.Name
@@ -35,24 +43,24 @@ func (m *Model) Init(f *messages.Feature) error {
 	for _, child := range f.Children {
 		if child.Rule != nil {
 			_, err := m.initPolicy(child.Rule)
-			if err != nil { 
+			if err != nil {
 				return err
 			}
 		} else if child.Background != nil {
 			_, err := m.initAssumption(child.Background)
-			if err != nil { 
+			if err != nil {
 				return err
 			}
 		} else if child.Scenario != nil {
 			switch child.Scenario.Keyword {
-			case "Attack":		
+			case "Attack":
 				_, err := m.initAttack(child.Scenario)
-				if err != nil { 
+				if err != nil {
 					return err
 				}
-			case "Defense":		
+			case "Defense":
 				_, err := m.initDefense(child.Scenario)
-				if err != nil { 
+				if err != nil {
 					return err
 				}
 			}
@@ -95,12 +103,12 @@ func (m *Model) initPolicy(r *messages.Rule) (*Policy, error) {
 	// Defense <---> Policy Defense [chain]                  (6)
 
 	for _, a := range m.Attacks {
-		ConnectAttackToDefenses(a, p.Defenses)                   // (1),(2),(5)
-		p.ConnectAttackToPolicyByTags(a)                         // (3)
+		ConnectAttackToDefenses(a, p.Defenses) // (1),(2),(5)
+		p.ConnectAttackToPolicyByTags(a)       // (3)
 	}
 	MultiConnectAttacksAndDefensesByTag(m.Attacks, p.Defenses) // (4)
 	for _, d := range p.Defenses {
-		ChainDefenses(d, m.Defenses)                             // (5)
+		ChainDefenses(d, m.Defenses) // (5)
 	}
 
 	return &p, nil
@@ -113,9 +121,9 @@ func (m *Model) initAssumption(b *messages.Background) (*Assumption, error) {
 		return nil, err
 	}
 	if _, present := m.Assumptions[a.Title]; present {
-		// This error will not be encountered under normal conditions because 
+		// This error will not be encountered under normal conditions because
 		// gherkin parser would have failed when it sees 2 assumption sections.
-		// This piece of code is added only for cases where gherkin structures 
+		// This piece of code is added only for cases where gherkin structures
 		// are filled in code before being passed to this model.
 		return nil, errors.New("assumption - '" + a.Title + "' is already part of this model")
 	}
@@ -140,7 +148,7 @@ func (m *Model) initAttack(s *messages.Scenario) (*Attack, error) {
 	// Attack <---> Attack         [chain]                  (1)
 	// Attack ----> Defense        [mitigation]             (2)
 	// Attack ----> Policy Defense [mitigation]             (3)
-  // Attack ----> Defense        [response]               (4)
+	// Attack ----> Defense        [response]               (4)
 	// Attack ----> Policy Defense [response]               (5)
 	// Attack --T-> Defense        [mitigation by tag]      (6)
 	// Attack --T-> Policy         [mitigation by tag]      (7)
@@ -148,9 +156,9 @@ func (m *Model) initAttack(s *messages.Scenario) (*Attack, error) {
 	// Attack <---- Defense        [thwart]                 (9)
 	// Attack <---- Policy Defense [thwart]                 (10)
 
-	ChainAttacks(&a, m.Attacks)                               // (1)
-	ConnectAttackToDefenses(&a, m.Defenses)                   // (2),(4),(9)
-	ConnectSingleAttackToMultiDefensesByTag(&a, m.Defenses)   // (6)
+	ChainAttacks(&a, m.Attacks)                             // (1)
+	ConnectAttackToDefenses(&a, m.Defenses)                 // (2),(4),(9)
+	ConnectSingleAttackToMultiDefensesByTag(&a, m.Defenses) // (6)
 	for _, p := range m.Policies {
 		p.ConnectAttackToPolicyByTags(&a)                       // (7)
 		ConnectAttackToDefenses(&a, p.Defenses)                 // (3),(5),(10)
@@ -178,14 +186,14 @@ func (m *Model) initDefense(s *messages.Scenario) (*Defense, error) {
 	// Defense ----> Attack         [thwart]                 (1)
 	// Defense <---> Defense        [chain]                  (2)
 	// Defense <---> Policy Defense [chain]                  (3)
-  // Defense <---- Attack         [mitigation]             (4)
+	// Defense <---- Attack         [mitigation]             (4)
 	// Defense <---- Attack         [response]               (5)
 	// Defense <-T-- Attack         [mitigation by tag]      (6)
 
-	ConnectDefenseToAttacks(&d, m.Attacks)                // (1),(4),(5)
-	ChainDefenses(&d, m.Defenses)                         // (2)
+	ConnectDefenseToAttacks(&d, m.Attacks) // (1),(4),(5)
+	ChainDefenses(&d, m.Defenses)          // (2)
 	for _, p := range m.Policies {
-		ChainDefenses(&d, p.Defenses)                       // (3)
+		ChainDefenses(&d, p.Defenses) // (3)
 	}
 	ConnectMultiAttacksToSingleDefensByTag(m.Attacks, &d) // (6)
 

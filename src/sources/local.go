@@ -25,7 +25,7 @@ func (l LocalSource) GetFiles(path string) ([]string, error) {
 }
 
 func (l LocalSource) GetContent(path string) (string, error) {
-	
+
 	var content string
 
 	if l.CanHandle(path) {
@@ -70,7 +70,7 @@ func traverse(path string) ([]string, error) {
 		for _, item := range items {
 
 			if item.IsDir() { // subdirectories
-				newFiles, err := traverse(path+"/"+item.Name())
+				newFiles, err := traverse(path + "/" + item.Name())
 				if err != nil {
 					return files, err
 				}

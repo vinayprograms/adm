@@ -23,7 +23,7 @@ func TestStatsGeneration(t *testing.T) {
 	result := strings.Split(out, "\n")[1:]
 	assert.Contains(t, result, "Found 1 file(s)")
 	assert.Contains(t, result, "MODEL: Client secrets and keys")
-	assert.Contains(t, result, "\tATTACK: Secrets extracted via path traversal",)
+	assert.Contains(t, result, "\tATTACK: Secrets extracted via path traversal")
 	assert.Contains(t, result, "\tATTACK: Secrets extracted via web-server path traversal")
 	assert.Contains(t, result, "\tATTACK: Secrets extracted via encoded path in URL")
 	assert.Contains(t, result, "\tATTACK: Secrets extracted via encoded path in URL sent to Apache Web Server")
@@ -54,7 +54,7 @@ func TestStatsWithPolicies(t *testing.T) {
 	result := strings.Split(out, "\n")[1:]
 	assert.Contains(t, result, "Found 1 file(s)")
 	assert.Contains(t, result, "MODEL: Friends fight")
-	assert.Contains(t, result, "\tATTACK: Adam cheats Bob",)
+	assert.Contains(t, result, "\tATTACK: Adam cheats Bob")
 	assert.Contains(t, result, "\tATTACK: Adam hides the cheat")
 	assert.Contains(t, result, "\tDEFENSE: Adam's cheating is caught")
 	assert.Contains(t, result, "\tDEFENSE: Bob tries to verify Adam's story")

@@ -192,14 +192,14 @@ func TestGraphWithTwoModels(t *testing.T) {
 	assert.Equal(t, g.RealitySuccessors["Adam cheats on Bob"], m1.Attacks["Adam cheats on Bob"])
 	assert.Equal(t, g.RealitySuccessors["Separate Charlie from others"], m2.Defenses["Separate Charlie from others"])
 	// Attacker Wins
-	assert.Equal(t, g.AttackerWinsPredecessors["Adam cheats on Bob"], m1.Attacks["Adam cheats on Bob"])	
-	assert.Equal(t, g.AttackerWinsPredecessors["Charlie sows doubt"], m2.Attacks["Charlie sows doubt"])	
+	assert.Equal(t, g.AttackerWinsPredecessors["Adam cheats on Bob"], m1.Attacks["Adam cheats on Bob"])
+	assert.Equal(t, g.AttackerWinsPredecessors["Charlie sows doubt"], m2.Attacks["Charlie sows doubt"])
 	// Model inter-connect
-	assert.Equal(t, 
-		m2.Attacks["Charlie sows doubt"].Actions["Adam cooks-up a story to convince Bob"].Item[0], 
+	assert.Equal(t,
+		m2.Attacks["Charlie sows doubt"].Actions["Adam cooks-up a story to convince Bob"].Item[0],
 		m1.Defenses["Adam hides the cheat"])
-	assert.Equal(t, 
-		m2.Defenses["Bob tries to verify Adam's story"].PreConditions["Adam hides the cheat"].Item[0], 
+	assert.Equal(t,
+		m2.Defenses["Bob tries to verify Adam's story"].PreConditions["Adam hides the cheat"].Item[0],
 		m1.Defenses["Adam hides the cheat"])
 }
 
@@ -212,11 +212,15 @@ func TestGraphContainsCheck(t *testing.T) {
 `
 
 	gherkin1, err := loaders.LoadGherkinContent(model1)
-	if err != nil { t.Error(err) }
+	if err != nil {
+		t.Error(err)
+	}
 
 	var m1 model.Model
 	err = m1.Init(gherkin1.Feature)
-	if err != nil { t.Error(err) }
+	if err != nil {
+		t.Error(err)
+	}
 
 	var g graph.Graph
 	g.Init()

@@ -18,7 +18,9 @@ func BuildAssumptionSubgraph(a *model.Assumption, config GraphvizConfig) (s subg
 	}
 	// add edge connecting reality to the assumption cluster.
 	var firstKey string
-	for firstKey = range a.PreConditions {break}
-	connectAndAppend(s.Edges, "reality", generateID(a.PreConditions[firstKey].Statement), "lhead=cluster_" + generateID(a.Title))
+	for firstKey = range a.PreConditions {
+		break
+	}
+	connectAndAppend(s.Edges, "reality", generateID(a.PreConditions[firstKey].Statement), "lhead=cluster_"+generateID(a.Title))
 	return
 }

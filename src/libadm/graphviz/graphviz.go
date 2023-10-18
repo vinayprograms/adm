@@ -10,11 +10,11 @@ import (
 func GenerateGraphvizCode(g *graph.Graph, config GraphvizConfig) ([]string, error) {
 	// Generate graphviz code
 	var lines []string
-	
+
 	lines = append(lines, generateHeader("top", len(g.AttackerWinsPredecessors) > 0, config.Reality, config.AttackerWins)...)
-	
+
 	lines = append(lines, generateBody(g, config)...)
-	
+
 	lines = append(lines, generateFooter()...)
 
 	return lines, nil
@@ -47,10 +47,10 @@ func generateBody(g *graph.Graph, config GraphvizConfig) (lines []string) {
 	}
 	// add code for graph nodes that link to 'attacker wins'
 	for title := range g.AttackerWinsPredecessors {
-		lines = appendLine(lines, 1, generateID(title) + " -> attacker_wins[" +
-						createProperty("penwidth", "4", false) + 
-						createProperty("color", "red", false) + 
-						"]")
+		lines = appendLine(lines, 1, generateID(title)+" -> attacker_wins["+
+			createProperty("penwidth", "4", false)+
+			createProperty("color", "red", false)+
+			"]")
 	}
 
 	return

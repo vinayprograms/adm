@@ -7,8 +7,11 @@ func BuildPolicySubgraph(p *model.Policy, config GraphvizConfig) (s subgraph) {
 	assumptionIDs := make(map[string]string)
 	for _, assumption := range p.Assumptions {
 		ss := BuildAssumptionSubgraph(assumption, config)
-		var key string; for key = range assumption.PreConditions {break}
-		assumptionIDs["cluster_" + generateID(ss.label)] = generateID(key)
+		var key string
+		for key = range assumption.PreConditions {
+			break
+		}
+		assumptionIDs["cluster_"+generateID(ss.label)] = generateID(key)
 		s.AddSubgraph(&ss)
 	}
 	for _, defense := range p.Defenses {
@@ -23,7 +26,7 @@ func BuildPolicySubgraph(p *model.Policy, config GraphvizConfig) (s subgraph) {
 
 		// add edges
 		for id, nodeKey := range assumptionIDs { // connect defense to all assumptions under this policy
-			connectAndAppend(s.Edges, nodeKey, generateID(defense.Title), "ltail=" + id)
+			connectAndAppend(s.Edges, nodeKey, generateID(defense.Title), "ltail="+id)
 		}
 		for _, pre := range defense.PreConditions {
 			if pre.Item == nil { // Precondition
@@ -40,7 +43,7 @@ func BuildPolicySubgraph(p *model.Policy, config GraphvizConfig) (s subgraph) {
 				connectAndAppend(s.Edges, generateID(attack.Title), generateID(defense.Title), "")
 			}
 		}
-		
+
 		// TODO: Add policy tags pointing to attacks
 
 		for _, attacks := range defense.Tags { // if specific defense tag points to another attack/defense
@@ -52,10 +55,12 @@ func BuildPolicySubgraph(p *model.Policy, config GraphvizConfig) (s subgraph) {
 	// Link each attack to policy if they are linked by tags. For this, we pick the first defense,
 	// link it to that, but tell graphviz to stop the arrow at the policy box.
 	var firstKey string
-	for firstKey = range p.Defenses { break }
+	for firstKey = range p.Defenses {
+		break
+	}
 	for _, attacks := range p.Tags { // if attacks are linked to policies
 		for _, attack := range attacks {
-			connectAndAppend(s.Edges, generateID(attack.Title), generateID(firstKey), "lhead=cluster_" + generateID(p.Title))
+			connectAndAppend(s.Edges, generateID(attack.Title), generateID(firstKey), "lhead=cluster_"+generateID(p.Title))
 		}
 	}
 	return

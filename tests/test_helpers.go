@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-/////////////////////////////////////////////////
+// ///////////////////////////////////////////////
 // Helper functions
 func sendToParseArgs(params []string) (err error) {
 	parser := args.Args{}
@@ -18,14 +18,14 @@ func sendToParseArgs(params []string) (err error) {
 	return parser.ParseArgs(params)
 }
 
-//*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+// */*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
 // TEST HARNESS
 // Interceptor captures STDOUT and STDERR
 // so that we can see fmt.Println's output and
 // output to os.Stderr.
-// - Your code must run after call to `Hook()`.
-// - You should call ReadAndRelease() to restore
-//   OS defaults.
+//   - Your code must run after call to `Hook()`.
+//   - You should call ReadAndRelease() to restore
+//     OS defaults.
 type output_interceptor struct {
 	originalOut *os.File
 	originalErr *os.File

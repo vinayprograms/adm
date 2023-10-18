@@ -4,7 +4,7 @@ package model
 func ConnectIfAttackThwartsDefense(a *Attack, d *Defense) bool {
 	for aActionTitle, aActionRef := range a.Actions {
 		if match := d.Results[aActionTitle]; match != nil {
-			aActionRef.Item = append (aActionRef.Item, d)
+			aActionRef.Item = append(aActionRef.Item, d)
 			return true
 		}
 	}
@@ -43,7 +43,6 @@ func ConnectDefenseToAttacks(d *Defense, attacks map[string]*Attack) {
 		ConnectIfDefenseRespondsToAttack(attack, d)
 	}
 }
-
 
 func ConnectAttackToDefenses(a *Attack, defenses map[string]*Defense) {
 	for _, defense := range defenses {

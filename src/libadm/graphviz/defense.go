@@ -11,7 +11,7 @@ import (
 func GetDefenseCode(d *model.Defense, config GraphvizConfig) (codeLines map[string]string, preConditions []string) {
 	codeLines = make(map[string]string)
 	for title, p := range d.PreConditions {
-		if (p.Item == nil) { // add it only if precondition doesn't refer to another object (attack, defense, etc.)
+		if p.Item == nil { // add it only if precondition doesn't refer to another object (attack, defense, etc.)
 			preConditions = append(preConditions, generateID(title))
 			code := generateNodeSpec(p.Step.Statement, config.PreConditions, false)
 			codeLines[generateID(title)] = "[" + strings.TrimSpace(code) + "]"
@@ -19,12 +19,12 @@ func GetDefenseCode(d *model.Defense, config GraphvizConfig) (codeLines map[stri
 	}
 	if len(d.PreConditions) == 0 && len(d.Actions) == 0 && len(d.Results) == 0 {
 		codeLines[generateID(d.Title)] = "[" + strings.TrimSpace(generateNodeSpec(d.Title, config.EmptyDefense, true)) + "]"
-	} else if isIncidentResponse(d){
+	} else if isIncidentResponse(d) {
 		codeLines[generateID(d.Title)] = "[" + strings.TrimSpace(generateNodeSpec(d.Title, config.IncidentResponse, false)) + "]"
 	} else {
 		codeLines[generateID(d.Title)] = "[" + strings.TrimSpace(generateNodeSpec(d.Title, config.PreEmptiveDefense, false)) + "]"
 	}
-	
+
 	return
 }
 

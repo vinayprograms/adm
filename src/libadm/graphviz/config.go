@@ -5,29 +5,30 @@ package graphviz
 
 // Set of configuration parameters for entire graph.
 type GraphvizConfig struct {
-	Assumption				NodeProperties
-	Policy						NodeProperties
-	PreConditions			NodeProperties
-	PreEmptiveDefense	NodeProperties
-	IncidentResponse	NodeProperties
-	Attack						NodeProperties
-	
-	EmptyDefense			NodeProperties
-	EmptyAttack				NodeProperties
+	Assumption        NodeProperties
+	Policy            NodeProperties
+	PreConditions     NodeProperties
+	PreEmptiveDefense NodeProperties
+	IncidentResponse  NodeProperties
+	Attack            NodeProperties
 
-	Reality						NodeProperties
-	AttackerWins			NodeProperties
+	EmptyDefense NodeProperties
+	EmptyAttack  NodeProperties
 
-	Subgraph					TextProperties
+	Reality      NodeProperties
+	AttackerWins NodeProperties
+
+	Subgraph TextProperties
 }
 
 // Colors to use when generating graphviz code. These should be colors that your
 // graphviz rendering engine supports. Values are not validated here.
 type ColorSet struct {
-	FontColor 	string
-	FillColor 	string
-	BorderColor	string
+	FontColor   string
+	FillColor   string
+	BorderColor string
 }
+
 func (c ColorSet) Apply() (code string) {
 	code += createProperty("fontcolor", c.FontColor, false)
 	code += createProperty("fillcolor", c.FillColor, false)
@@ -38,9 +39,10 @@ func (c ColorSet) Apply() (code string) {
 // Font to use when generating graphviz code. This font  must be supported by your
 // graphviz rendering engine. Values are not validated here.
 type TextProperties struct {
-	FontName	string
-	FontSize	string
+	FontName string
+	FontSize string
 }
+
 func (t TextProperties) Apply() (code string) {
 	code += createProperty("fontname", t.FontName, false)
 	code += createProperty("fontsize", t.FontSize, false)
@@ -49,9 +51,10 @@ func (t TextProperties) Apply() (code string) {
 
 // Full set of properties for a specific node in the graph.
 type NodeProperties struct {
-	Color	ColorSet
-	Font TextProperties
+	Color ColorSet
+	Font  TextProperties
 }
+
 func (n NodeProperties) Apply(id string, label string, shape string) (code string) {
 	code += id + "["
 	code += createProperty("label", label, false)

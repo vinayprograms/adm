@@ -6,15 +6,15 @@ import (
 )
 
 type Graph struct {
-	Models map[string]*model.Model
-	RealitySuccessors					map[string]interface{}
-	AttackerWinsPredecessors	map[string]interface{}
+	Models                   map[string]*model.Model
+	RealitySuccessors        map[string]interface{}
+	AttackerWinsPredecessors map[string]interface{}
 }
 
 // A graph should atleast have one model
 func (g *Graph) Init() {
 	g.Models = make(map[string]*model.Model)
-	g.RealitySuccessors	= make(map[string]interface{})
+	g.RealitySuccessors = make(map[string]interface{})
 	g.AttackerWinsPredecessors = make(map[string]interface{})
 }
 
@@ -25,7 +25,7 @@ func (g *Graph) AddModel(m *model.Model) error {
 
 	// Apply ADM rules first to make inter-model connections
 	g.applyADMRules(m)
-	
+
 	// Add model to graph
 	g.ConnectToReality(m)
 	g.ConnectToAttackerWins(m)
@@ -48,7 +48,7 @@ func (g *Graph) GetModel(title string) *model.Model {
 }
 
 // TODO: Replacement and deletion requires logic to disconnect model contents from the graph
-/* 
+/*
 func (g *Graph) ReplaceModel(title string, m *model.Model) error {
 	if g.models[title] != nil && title == m.Title {
 		g.models[title] = m
@@ -75,10 +75,10 @@ func (g *Graph) ConnectToReality(m *model.Model) error {
 		g.connectAssumptionToReality(a)
 	}
 	for _, p := range m.Policies {
-		g.connectPolicyToReality(p)		
+		g.connectPolicyToReality(p)
 	}
 	for _, a := range m.Attacks {
-		g.connectAttackToReality(a)		
+		g.connectAttackToReality(a)
 	}
 	for _, d := range m.Defenses {
 		g.connectDefenseToReality(d)
@@ -89,7 +89,7 @@ func (g *Graph) ConnectToReality(m *model.Model) error {
 
 func (g *Graph) ConnectToAttackerWins(m *model.Model) {
 	for title, attack := range m.Attacks {
-		if (len(attack.PreConditions) == 0 && len(attack.Actions) == 0 && len(attack.Results) == 0) { // Empty specs cannot be considered
+		if len(attack.PreConditions) == 0 && len(attack.Actions) == 0 && len(attack.Results) == 0 { // Empty specs cannot be considered
 			continue
 		} else if _, present := g.AttackerWinsPredecessors[title]; present { // if already listed
 			continue
@@ -143,7 +143,7 @@ func (g *Graph) applyADMRules(m *model.Model) {
 		//  Defense					<--->  Policy Defense     (11)
 		//  Defense					<----  Attack             (12)
 		//  Defense					<-T--  Attack             (13)
-		// 
+		//
 		//  Policy Defense	---->  Attack             (14)
 		//  Policy Defense	<--->  Defense            (15)
 		//  Policy Defense	<--->  Policy Defense     (16)
@@ -153,39 +153,39 @@ func (g *Graph) applyADMRules(m *model.Model) {
 
 		// new attacks
 		for _, attack := range m.Attacks {
-			model.ChainAttacks(attack, existing.Attacks)                            // (1)
-			model.ConnectAttackToDefenses(attack, existing.Defenses)                // (2),(7)
+			model.ChainAttacks(attack, existing.Attacks)             // (1)
+			model.ConnectAttackToDefenses(attack, existing.Defenses) // (2),(7)
 			for _, p := range existing.Policies {
-				model.ConnectAttackToDefenses(attack, p.Defenses)                     // (4),(8)
-				p.ConnectAttackToPolicyByTags(attack)                                 // (5)
+				model.ConnectAttackToDefenses(attack, p.Defenses) // (4),(8)
+				p.ConnectAttackToPolicyByTags(attack)             // (5)
 			}
 		}
-		model.MultiConnectAttacksAndDefensesByTag(m.Attacks, existing.Defenses)   // (3)
+		model.MultiConnectAttacksAndDefensesByTag(m.Attacks, existing.Defenses) // (3)
 		for _, p := range existing.Policies {
-			model.MultiConnectAttacksAndDefensesByTag(m.Attacks, p.Defenses)        // (6)
+			model.MultiConnectAttacksAndDefensesByTag(m.Attacks, p.Defenses) // (6)
 		}
 
 		// new defenses
 		for _, defense := range m.Defenses {
-			model.ConnectDefenseToAttacks(defense, existing.Attacks)                // (9),(12)
-			model.ChainDefenses(defense, existing.Defenses)                         // (10)
+			model.ConnectDefenseToAttacks(defense, existing.Attacks) // (9),(12)
+			model.ChainDefenses(defense, existing.Defenses)          // (10)
 			for _, p := range existing.Policies {
-				model.ChainDefenses(defense, p.Defenses)                              // (11)
+				model.ChainDefenses(defense, p.Defenses) // (11)
 			}
 		}
-		model.MultiConnectAttacksAndDefensesByTag(existing.Attacks, m.Defenses)   // (13)
-		
+		model.MultiConnectAttacksAndDefensesByTag(existing.Attacks, m.Defenses) // (13)
+
 		// new policies
 		for _, p := range m.Policies {
 			for _, defense := range p.Defenses {
-				model.ConnectDefenseToAttacks(defense, existing.Attacks)              // (14), (15)
-				model.ChainDefenses(defense, existing.Defenses)                       // (17)
+				model.ConnectDefenseToAttacks(defense, existing.Attacks) // (14), (15)
+				model.ChainDefenses(defense, existing.Defenses)          // (17)
 				for _, ep := range existing.Policies {
-					model.ChainDefenses(defense, ep.Defenses)                           // (16)
+					model.ChainDefenses(defense, ep.Defenses) // (16)
 				}
 			}
 			for _, attack := range existing.Attacks {
-				p.ConnectAttackToPolicyByTags(attack)                                 // (19)
+				p.ConnectAttackToPolicyByTags(attack) // (19)
 			}
 			model.MultiConnectAttacksAndDefensesByTag(existing.Attacks, p.Defenses) // (18)
 		}
@@ -193,12 +193,12 @@ func (g *Graph) applyADMRules(m *model.Model) {
 }
 
 // All assumptions & its preconditions are connected to reality
-func (g * Graph) connectAssumptionToReality(a *model.Assumption) {
+func (g *Graph) connectAssumptionToReality(a *model.Assumption) {
 	g.RealitySuccessors[a.Title] = a
 }
 
 // Connect all preconditions of a policy to 'reality' along with defense that don't have any predecessors
-func (g * Graph) connectPolicyToReality(p *model.Policy) {
+func (g *Graph) connectPolicyToReality(p *model.Policy) {
 	// Connect defenses that don't have predecessor to reality
 	for _, d := range p.Defenses {
 		g.connectDefenseToReality(d)

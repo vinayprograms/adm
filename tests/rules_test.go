@@ -46,20 +46,20 @@ func TestRule_DefenseChain(t *testing.T) {
 }
 
 func TestRule_PolicyMitigatesAttack(t *testing.T) {
-	f := messages.Feature {
+	f := messages.Feature{
 		Language: "en",
-		Keyword: "Model",
-		Name: "Password security",
-		Children: []*messages.FeatureChild {
+		Keyword:  "Model",
+		Name:     "Password security",
+		Children: []*messages.FeatureChild{
 			0: {
 				Rule: &messages.Rule{
 					Keyword: "Policy",
-					Name: "Password security best-practices",
-					Children: []*messages.RuleChild {
+					Name:    "Password security best-practices",
+					Children: []*messages.RuleChild{
 						0: {
 							Scenario: &messages.Scenario{
 								Keyword: "Defense",
-								Name: "Password length must be greater than 8 characters",
+								Name:    "Password length must be greater than 8 characters",
 								Tags: []*messages.Tag{
 									0: {
 										Name: "@password-len",
@@ -73,7 +73,7 @@ func TestRule_PolicyMitigatesAttack(t *testing.T) {
 			1: {
 				Scenario: &messages.Scenario{
 					Keyword: "Attack",
-					Name: "Bruteforce short passwords",
+					Name:    "Bruteforce short passwords",
 					Tags: []*messages.Tag{
 						0: {
 							Name: "@password-len",
@@ -87,11 +87,11 @@ func TestRule_PolicyMitigatesAttack(t *testing.T) {
 	var model model.Model
 	model.Init(&f)
 	assert.Equal(t,
-		"Bruteforce short passwords", 
+		"Bruteforce short passwords",
 		model.Policies["Password security best-practices"].
-				Defenses["Password length must be greater than 8 characters"].
-				Tags["@password-len"][0].
-				Title)
+			Defenses["Password length must be greater than 8 characters"].
+			Tags["@password-len"][0].
+			Title)
 }
 
 func TestRule_DefenseMitigatesAttack(t *testing.T) {

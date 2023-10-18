@@ -8,13 +8,13 @@ import "github.com/cucumber/gherkin-go/v19"
 type admDialectProvider struct{}
 
 func (adp admDialectProvider) GetDialect(language string) *gherkin.GherkinDialect {
-	
+
 	// We don't case about 'language' parameter passed to this function
-	
+
 	return &(gherkin.GherkinDialect{
-		Language: "adm", 
-		Name: "attack-defense modeling", 
-		Native: "attack-defense modeling", 
+		Language: "adm",
+		Name:     "attack-defense modeling",
+		Native:   "attack-defense modeling",
 		Keywords: map[string][]string{
 			// Customized for ADM
 			"feature":    {"Model"},
@@ -23,12 +23,12 @@ func (adp admDialectProvider) GetDialect(language string) *gherkin.GherkinDialec
 			"background": {"Assumption"},
 
 			// Default (from Gherkin)
-			"examples":   {"Examples"},
-			"given":      {"Given"},
-			"when":       {"When"},
-			"then":       {"Then"},
-			"and":        {"And"},
-			"but":        {"But"},
+			"examples": {"Examples"},
+			"given":    {"Given"},
+			"when":     {"When"},
+			"then":     {"Then"},
+			"and":      {"And"},
+			"but":      {"But"},
 		},
 	})
 }

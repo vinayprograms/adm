@@ -9,24 +9,24 @@ import (
 // Common internal functions
 
 func prepareHeaderLines(title string, actors []*model.ModelActor, typeFilter model.ActorType) (lines []string) {
-	lines = append(lines, "Feature: " + title)
+	lines = append(lines, "Feature: "+title)
 	for _, actor := range actors {
 		if actor.Actor != typeFilter {
 			continue
 		}
-		lines = append(lines, genrateTabs(1) + "As a " + fmt.Sprint(actor.Actor))
+		lines = append(lines, genrateTabs(1)+"As a "+fmt.Sprint(actor.Actor))
 		for _, intent := range actor.Intents {
-			lines = append(lines, genrateTabs(1) + intent)
+			lines = append(lines, genrateTabs(1)+intent)
 		}
 		for _, goal := range actor.Purposes {
-			lines = append(lines, genrateTabs(1) + goal)
+			lines = append(lines, genrateTabs(1)+goal)
 		}
 	}
 	return lines
 }
 
 func generateAssumptionLines(assumption *model.Assumption) (lines []string) {
-	lines = append(lines, genrateTabs(1) + "Background: " + assumption.Title)
+	lines = append(lines, genrateTabs(1)+"Background: "+assumption.Title)
 	for _, preCondition := range assumption.PreConditions {
 		lines = append(lines, prepareStatement(preCondition)...)
 	}
@@ -47,11 +47,11 @@ func generateResultLines(results map[string]*model.Step) (lines []string) {
 }
 
 func prepareStatement(step *model.Step) (lines []string) {
-	lines = append(lines, genrateTabs(2) + step.Keyword + " " + step.Statement)
+	lines = append(lines, genrateTabs(2)+step.Keyword+" "+step.Statement)
 	if step.DocString != "" {
-		lines = append(lines, genrateTabs(2) + "\"\"\"" + step.DocStringType)
+		lines = append(lines, genrateTabs(2)+"\"\"\""+step.DocStringType)
 		lines = append(lines, step.DocString)
-		lines = append(lines, genrateTabs(2) + "\"\"\"")
+		lines = append(lines, genrateTabs(2)+"\"\"\"")
 	}
 	return lines
 }

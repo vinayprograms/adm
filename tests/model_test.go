@@ -249,31 +249,31 @@ func TestModelWithAssumption(t *testing.T) {
 }*/
 
 func TestModel_Duplicates(t *testing.T) {
-	testVectors := map[string][]string {
+	testVectors := map[string][]string{
 		"SamePolicy": {`Model: Model with duplicates
 			Policy: Honesty is the best policy
 				Defense: Be Honest
 			Policy: Honesty is the best policy
 				Defense: Be Honest
-	`,"policy - 'Honesty is the best policy' is already part of this model"},
-	"SameAssumption": {`Model: Model with duplicates
+	`, "policy - 'Honesty is the best policy' is already part of this model"},
+		"SameAssumption": {`Model: Model with duplicates
 			Assumption: Don't assume everything
 				Given a lot of assumptions
 			Assumption: Don't assume everything
 				Given a lot of assumptions
-	`,"Parser errors:\n(4:4): expected: #EOF, #TableRow, #DocStringSeparator, #StepLine, #TagLine, #ScenarioLine, #RuleLine, #Comment, #Empty, got '\t\t\tAssumption: Don't assume everything'"},
-	"SameDefense": {`Model: Model with duplicates
+	`, "Parser errors:\n(4:4): expected: #EOF, #TableRow, #DocStringSeparator, #StepLine, #TagLine, #ScenarioLine, #RuleLine, #Comment, #Empty, got '\t\t\tAssumption: Don't assume everything'"},
+		"SameDefense": {`Model: Model with duplicates
 			Defense: We must defend our systems
 			Defense: We must defend our systems
-	`,"defense - 'We must defend our systems' is already part of this model"},
-	"SameAttack": {`Model: Model with duplicates
+	`, "defense - 'We must defend our systems' is already part of this model"},
+		"SameAttack": {`Model: Model with duplicates
 			Attack: Master of Pwn
 			Attack: Master of Pwn
-	`,"attack - 'Master of Pwn' is already part of this model"},
+	`, "attack - 'Master of Pwn' is already part of this model"},
 	}
 
 	for name, args := range testVectors {
-		t.Run(name, func(t *testing.T){
+		t.Run(name, func(t *testing.T) {
 			input := args[0]
 			expected := args[1]
 			gherkinModel, err := loaders.LoadGherkinContent(input)
@@ -281,7 +281,7 @@ func TestModel_Duplicates(t *testing.T) {
 				if name == "SameAssumption" {
 					assert.Equal(t, expected, err.Error())
 					return
-				}else {
+				} else {
 					t.Error(err)
 				}
 			}
@@ -293,17 +293,17 @@ func TestModel_Duplicates(t *testing.T) {
 		})
 	}
 
-	// Specific test to check when same assumption structure is 
+	// Specific test to check when same assumption structure is
 	// passed twice to the model
-	f := messages.Feature {
+	f := messages.Feature{
 		Language: "en",
-		Keyword: "Model",
-		Name: "Model with duplicate Assumptions",
+		Keyword:  "Model",
+		Name:     "Model with duplicate Assumptions",
 	}
 	f.Children = append(f.Children, &messages.FeatureChild{
-		Background: &messages.Background {
+		Background: &messages.Background{
 			Keyword: "Assumption",
-			Name: "Don't assume everything",
+			Name:    "Don't assume everything",
 		},
 	})
 	var model model.Model
@@ -314,15 +314,15 @@ func TestModel_Duplicates(t *testing.T) {
 }
 
 func TestModel_Errors(t *testing.T) {
-	testVectors := map[string][]string {
-	"BadAssumption": {`Model: Model with duplicates
+	testVectors := map[string][]string{
+		"BadAssumption": {`Model: Model with duplicates
 			Assumption: Don't assume everything
 				When a lot of assumptions
-	`,"Unexpected keyword - 'When' in Assumption specification"},
+	`, "Unexpected keyword - 'When' in Assumption specification"},
 	}
 
 	for name, args := range testVectors {
-		t.Run(name, func(t *testing.T){
+		t.Run(name, func(t *testing.T) {
 			input := args[0]
 			expected := args[1]
 			gherkinModel, err := loaders.LoadGherkinContent(input)

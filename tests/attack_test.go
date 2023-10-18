@@ -66,41 +66,41 @@ func TestAttack_ButStatementsNotSupported(t *testing.T) {
 }
 
 func TestAttack_DuplicateStatements(t *testing.T) {
-	testVectors := map[string][]string {
+	testVectors := map[string][]string{
 		"SamePrecondition": {`Model: Model with just one attack
 		Attack: All systems are vulnerable
 			Given system is exposed to internet
 			Given system is exposed to internet
-	`,"precondition - 'system is exposed to internet' is already part of this attack"},
-	"SameAction": {`Model: Model with just one attack
+	`, "precondition - 'system is exposed to internet' is already part of this attack"},
+		"SameAction": {`Model: Model with just one attack
 		Attack: All systems are vulnerable
 			When nmap scan is run
 			When nmap scan is run
-	`,"action - 'nmap scan is run' is already part of this attack"},
-	"SameResult": {`Model: Model with just one attack
+	`, "action - 'nmap scan is run' is already part of this attack"},
+		"SameResult": {`Model: Model with just one attack
 		Attack: All systems are vulnerable
 			Then all possible ports are listed
 			Then all possible ports are listed
-	`,"result - 'all possible ports are listed' is already part of this attack"},
-	"SamePreconditionAsAnd": {`Model: Model with just one attack
+	`, "result - 'all possible ports are listed' is already part of this attack"},
+		"SamePreconditionAsAnd": {`Model: Model with just one attack
 		Attack: All systems are vulnerable
 			Given system is exposed to internet
 			And system is exposed to internet
-	`,"precondition - 'system is exposed to internet' is already part of this attack"},
-	"SameActionAsAnd": {`Model: Model with just one attack
+	`, "precondition - 'system is exposed to internet' is already part of this attack"},
+		"SameActionAsAnd": {`Model: Model with just one attack
 		Attack: All systems are vulnerable
 			When nmap scan is run
 			And nmap scan is run
-	`,"action - 'nmap scan is run' is already part of this attack"},
-	"SameResultAsAnd": {`Model: Model with just one attack
+	`, "action - 'nmap scan is run' is already part of this attack"},
+		"SameResultAsAnd": {`Model: Model with just one attack
 		Attack: All systems are vulnerable
 			Then all possible ports are listed
 			And all possible ports are listed
-	`,"result - 'all possible ports are listed' is already part of this attack"},
+	`, "result - 'all possible ports are listed' is already part of this attack"},
 	}
 
 	for name, args := range testVectors {
-		t.Run(name, func(t *testing.T){
+		t.Run(name, func(t *testing.T) {
 			input := args[0]
 			expected := args[1]
 			gherkinModel, err := loaders.LoadGherkinContent(input)

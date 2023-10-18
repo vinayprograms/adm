@@ -66,41 +66,41 @@ func TestDefense_ButStatementsNotSupported(t *testing.T) {
 }
 
 func TestDefense_DuplicateStatements(t *testing.T) {
-	testVectors := map[string][]string {
+	testVectors := map[string][]string{
 		"SamePrecondition": {`Model: Model with just one defense
 			Defense: We must defend our systems
 			Given system is exposed to internet
 			Given system is exposed to internet
-	`,"precondition - 'system is exposed to internet' is already part of this defense"},
-	"SameAction": {`Model: Model with just one defense
+	`, "precondition - 'system is exposed to internet' is already part of this defense"},
+		"SameAction": {`Model: Model with just one defense
 			Defense: We must defend our systems
 			When nmap scan is run
 			When nmap scan is run
-	`,"action - 'nmap scan is run' is already part of this defense"},
-	"SameResult": {`Model: Model with just one defense
+	`, "action - 'nmap scan is run' is already part of this defense"},
+		"SameResult": {`Model: Model with just one defense
 			Defense: We must defend our systems
 			Then block all ports except the one required for this service
 			Then block all ports except the one required for this service
-	`,"result - 'block all ports except the one required for this service' is already part of this defense"},
-	"SamePreconditionAsAnd": {`Model: Model with just one defense
+	`, "result - 'block all ports except the one required for this service' is already part of this defense"},
+		"SamePreconditionAsAnd": {`Model: Model with just one defense
 			Defense: We must defend our systems
 			Given system is exposed to internet
 			And system is exposed to internet
-	`,"precondition - 'system is exposed to internet' is already part of this defense"},
-	"SameActionAsAnd": {`Model: Model with just one defense
+	`, "precondition - 'system is exposed to internet' is already part of this defense"},
+		"SameActionAsAnd": {`Model: Model with just one defense
 			Defense: We must defend our systems
 			When nmap scan is run
 			And nmap scan is run
-	`,"action - 'nmap scan is run' is already part of this defense"},
-	"SameResultAsAnd": {`Model: Model with just one defense
+	`, "action - 'nmap scan is run' is already part of this defense"},
+		"SameResultAsAnd": {`Model: Model with just one defense
 			Defense: We must defend our systems
 			Then block all ports except the one required for this service
 			And block all ports except the one required for this service
-	`,"result - 'block all ports except the one required for this service' is already part of this defense"},
+	`, "result - 'block all ports except the one required for this service' is already part of this defense"},
 	}
 
 	for name, args := range testVectors {
-		t.Run(name, func(t *testing.T){
+		t.Run(name, func(t *testing.T) {
 			input := args[0]
 			expected := args[1]
 			gherkinModel, err := loaders.LoadGherkinContent(input)

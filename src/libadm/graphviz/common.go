@@ -34,7 +34,7 @@ func generateNodeSpec(title string, properties NodeProperties, isEmpty bool) (co
 }
 
 func appendLine(document []string, tabs int, line string) []string {
-	return append(document, genrateTabs(tabs) + line)
+	return append(document, genrateTabs(tabs)+line)
 }
 func appendLineSpacer(document []string) []string {
 	return append(document, "")
