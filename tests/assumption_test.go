@@ -130,17 +130,24 @@ func TestParseArgs(t *testing.T) {
 			harness := output_interceptor{}
 			harness.Hook()
 			err := sendToParseArgs(params)
-			out, _ := harness.ReadAndRelease()
+			out, _, log := harness.ReadAndRelease()
 
 			// only the last line contains the required output
-			out = strings.Split(out, "\n")[1]
-			fmt.Println(out)
+			var result string
+			if len(out) != 0 {
+				result = strings.Split(out, "\n")[1]
+			} else if len(log) != 0 {
+				result = strings.Split(log, "\n")[1]
+			} else {
+				result = ""
+			}
+			fmt.Println(result)
 
 			if err != nil { // We don't expect explicit errors in these set of tests
 				t.Error("ERROR:", err)
 			}
 
-			assert.Equal(t, expected, out)
+			assert.Contains(t, log, expected)
 		})
 	}
 }

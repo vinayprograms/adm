@@ -23,11 +23,11 @@ func TestExportWithFaultyADMSpec(t *testing.T) { // This should print errors to 
 	harness := output_interceptor{}
 	harness.Hook()
 	err := sendToParseArgs([]string{"export", "-o", "./examples/", "./examples/basic/faulty-admspec.adm"})
-	out, _ := harness.ReadAndRelease()
+	_, _, log := harness.ReadAndRelease()
 
 	assert.Nil(t, err)
-	assert.Contains(t, out, "Skipping processing of faulty-admspec.adm")
-	assert.Contains(t, out, "Failed loading model for faulty-admspec.adm")
+	assert.Contains(t, log, "Skipping processing of faulty-admspec.adm")
+	assert.Contains(t, log, "Failed loading model for faulty-admspec.adm")
 }
 
 func TestCorrectStatementSequenceAfterExport(t *testing.T) { // Tests if primary statements (Given/When/Then) and their "and" statements are sequenced properly.

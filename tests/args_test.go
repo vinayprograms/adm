@@ -22,7 +22,7 @@ func TestShowHelp(t *testing.T) {
 
 	parser.PrintHelpToStdout()
 
-	out, _ := harness.ReadAndRelease()
+	out, _, _ := harness.ReadAndRelease()
 
 	expected :=
 		"Usage: adm [OPTIONS] [PATH]\n" +
@@ -55,7 +55,7 @@ func TestUninitializedArgsStruct_ShowHelp(t *testing.T) {
 	harness := output_interceptor{}
 	harness.Hook()
 	parser.ParseArgs([]string{})
-	out, _ := harness.ReadAndRelease()
+	out, _, _ := harness.ReadAndRelease()
 	expected :=
 		"Usage: adm [OPTIONS] [PATH]\n" +
 			"\n[PATH]: The path to a directory or a single ADM file\n" +
@@ -104,7 +104,7 @@ func TestParseArgs_MissingParams(t *testing.T) {
 			harness.Hook()
 
 			err := sendToParseArgs(params)
-			out, _ := harness.ReadAndRelease()
+			out, _, _ := harness.ReadAndRelease()
 
 			// only the last line contains the required output
 			out = strings.Split(out, "\n")[1]

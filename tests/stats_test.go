@@ -16,29 +16,30 @@ func TestStatsGeneration(t *testing.T) {
 	harness.Hook()
 
 	err := sendToParseArgs(args)
-	out, _ := harness.ReadAndRelease()
+	out, _, log := harness.ReadAndRelease()
 
 	assert.Nil(t, err)
 	// only the last line contains the required output
-	result := strings.Split(out, "\n")[1:]
-	assert.Contains(t, result, "Found 1 file(s)")
-	assert.Contains(t, result, "MODEL: Client secrets and keys")
-	assert.Contains(t, result, "\tATTACK: Secrets extracted via path traversal")
-	assert.Contains(t, result, "\tATTACK: Secrets extracted via web-server path traversal")
-	assert.Contains(t, result, "\tATTACK: Secrets extracted via encoded path in URL")
-	assert.Contains(t, result, "\tATTACK: Secrets extracted via encoded path in URL sent to Apache Web Server")
-	assert.Contains(t, result, "\tATTACK: Compromize web server")
-	assert.Contains(t, result, "\tATTACK: Secrets extracted from code")
-	assert.Contains(t, result, "\tATTACK: Secrets extracted from app binary")
-	assert.Contains(t, result, "\tDEFENSE: Block encoded paths")
-	assert.Contains(t, result, "\tDEFENSE: Don't allow path traversal to configuration files")
-	assert.Contains(t, result, "\tDEFENSE: Web-server shouldn't serve config files")
-	assert.Contains(t, result, "\tDEFENSE: Encrypt secrets before storing in file")
-	assert.Contains(t, result, "\tDEFENSE: Don't publish code containing secrets")
-	assert.Contains(t, result, "\tDEFENSE: Don't publish app binary containing secrets")
-	assert.Contains(t, result, "\tDEFENSE: Don't store secrets in config file")
-	assert.Contains(t, result, "\tDEFENSE: use Apache Web Server v2.5.51 or later")
-	assert.Contains(t, result, "\tDEFENSE: Store secrets and keys in vault")
+	out_result := strings.Split(out, "\n")[1:]
+	log_result := strings.Split(log, "\n")
+	assert.Contains(t, log_result[0], "Found 1 file(s)")
+	assert.Contains(t, out_result, "MODEL: Client secrets and keys")
+	assert.Contains(t, out_result, "\tATTACK: Secrets extracted via path traversal")
+	assert.Contains(t, out_result, "\tATTACK: Secrets extracted via web-server path traversal")
+	assert.Contains(t, out_result, "\tATTACK: Secrets extracted via encoded path in URL")
+	assert.Contains(t, out_result, "\tATTACK: Secrets extracted via encoded path in URL sent to Apache Web Server")
+	assert.Contains(t, out_result, "\tATTACK: Compromize web server")
+	assert.Contains(t, out_result, "\tATTACK: Secrets extracted from code")
+	assert.Contains(t, out_result, "\tATTACK: Secrets extracted from app binary")
+	assert.Contains(t, out_result, "\tDEFENSE: Block encoded paths")
+	assert.Contains(t, out_result, "\tDEFENSE: Don't allow path traversal to configuration files")
+	assert.Contains(t, out_result, "\tDEFENSE: Web-server shouldn't serve config files")
+	assert.Contains(t, out_result, "\tDEFENSE: Encrypt secrets before storing in file")
+	assert.Contains(t, out_result, "\tDEFENSE: Don't publish code containing secrets")
+	assert.Contains(t, out_result, "\tDEFENSE: Don't publish app binary containing secrets")
+	assert.Contains(t, out_result, "\tDEFENSE: Don't store secrets in config file")
+	assert.Contains(t, out_result, "\tDEFENSE: use Apache Web Server v2.5.51 or later")
+	assert.Contains(t, out_result, "\tDEFENSE: Store secrets and keys in vault")
 }
 
 func TestStatsWithPolicies(t *testing.T) {
@@ -47,19 +48,20 @@ func TestStatsWithPolicies(t *testing.T) {
 	harness.Hook()
 
 	err := sendToParseArgs(args)
-	out, _ := harness.ReadAndRelease()
+	out, _, log := harness.ReadAndRelease()
 
 	assert.Nil(t, err)
 	// only the last line contains the required output
-	result := strings.Split(out, "\n")[1:]
-	assert.Contains(t, result, "Found 1 file(s)")
-	assert.Contains(t, result, "MODEL: Friends fight")
-	assert.Contains(t, result, "\tATTACK: Adam cheats Bob")
-	assert.Contains(t, result, "\tATTACK: Adam hides the cheat")
-	assert.Contains(t, result, "\tDEFENSE: Adam's cheating is caught")
-	assert.Contains(t, result, "\tDEFENSE: Bob tries to verify Adam's story")
-	assert.Contains(t, result, "\tPOLICY: Honesty is the best policy")
-	assert.Contains(t, result, "\t\tDEFENSE: Test honesty")
+	out_result := strings.Split(out, "\n")[1:]
+	log_result := strings.Split(log, "\n")
+	assert.Contains(t, log_result[0], "Found 1 file(s)")
+	assert.Contains(t, out_result, "MODEL: Friends fight")
+	assert.Contains(t, out_result, "\tATTACK: Adam cheats Bob")
+	assert.Contains(t, out_result, "\tATTACK: Adam hides the cheat")
+	assert.Contains(t, out_result, "\tDEFENSE: Adam's cheating is caught")
+	assert.Contains(t, out_result, "\tDEFENSE: Bob tries to verify Adam's story")
+	assert.Contains(t, out_result, "\tPOLICY: Honesty is the best policy")
+	assert.Contains(t, out_result, "\t\tDEFENSE: Test honesty")
 }
 
 func TestStatsWithPreemtiveDefensesFlag(t *testing.T) {
@@ -68,15 +70,16 @@ func TestStatsWithPreemtiveDefensesFlag(t *testing.T) {
 	harness.Hook()
 
 	err := sendToParseArgs(args)
-	out, _ := harness.ReadAndRelease()
+	out, _, log := harness.ReadAndRelease()
 
 	assert.Nil(t, err)
 	// only the last line contains the required output
-	result := strings.Split(out, "\n")[1:]
-	assert.Contains(t, result, "Found 1 file(s)")
-	assert.Contains(t, result, "MODEL: Friends fight")
-	assert.Contains(t, result, "\tPOLICY: Honesty is the best policy")
-	assert.Contains(t, result, "\t\tDEFENSE: Test honesty")
+	out_result := strings.Split(out, "\n")[1:]
+	log_result := strings.Split(log, "\n")
+	assert.Contains(t, log_result[0], "Found 1 file(s)")
+	assert.Contains(t, out_result, "MODEL: Friends fight")
+	assert.Contains(t, out_result, "\tPOLICY: Honesty is the best policy")
+	assert.Contains(t, out_result, "\t\tDEFENSE: Test honesty")
 }
 
 func TestStatsWithIRFlag(t *testing.T) {
@@ -85,15 +88,16 @@ func TestStatsWithIRFlag(t *testing.T) {
 	harness.Hook()
 
 	err := sendToParseArgs(args)
-	out, _ := harness.ReadAndRelease()
+	out, _, log := harness.ReadAndRelease()
 
 	assert.Nil(t, err)
 	// only the last line contains the required output
-	result := strings.Split(out, "\n")[1:]
-	assert.Contains(t, result, "Found 1 file(s)")
-	assert.Contains(t, result, "MODEL: Friends fight")
-	assert.Contains(t, result, "\tDEFENSE: Adam's cheating is caught")
-	assert.Contains(t, result, "\tDEFENSE: Bob tries to verify Adam's story")
+	out_result := strings.Split(out, "\n")[1:]
+	log_result := strings.Split(log, "\n")
+	assert.Contains(t, log_result[0], "Found 1 file(s)")
+	assert.Contains(t, out_result, "MODEL: Friends fight")
+	assert.Contains(t, out_result, "\tDEFENSE: Adam's cheating is caught")
+	assert.Contains(t, out_result, "\tDEFENSE: Bob tries to verify Adam's story")
 }
 
 func TestStatsWithDefenseAndIRFlags(t *testing.T) {
@@ -102,15 +106,16 @@ func TestStatsWithDefenseAndIRFlags(t *testing.T) {
 	harness.Hook()
 
 	err := sendToParseArgs(args)
-	out, _ := harness.ReadAndRelease()
+	out, _, log := harness.ReadAndRelease()
 
 	assert.Nil(t, err)
 	// only the last line contains the required output
-	result := strings.Split(out, "\n")[1:]
-	assert.Contains(t, result, "Found 1 file(s)")
-	assert.Contains(t, result, "MODEL: Friends fight")
-	assert.Contains(t, result, "\tDEFENSE: Adam's cheating is caught")
-	assert.Contains(t, result, "\tDEFENSE: Bob tries to verify Adam's story")
-	assert.Contains(t, result, "\tPOLICY: Honesty is the best policy")
-	assert.Contains(t, result, "\t\tDEFENSE: Test honesty")
+	out_result := strings.Split(out, "\n")[1:]
+	log_result := strings.Split(log, "\n")
+	assert.Contains(t, log_result[0], "Found 1 file(s)")
+	assert.Contains(t, out_result, "MODEL: Friends fight")
+	assert.Contains(t, out_result, "\tDEFENSE: Adam's cheating is caught")
+	assert.Contains(t, out_result, "\tDEFENSE: Bob tries to verify Adam's story")
+	assert.Contains(t, out_result, "\tPOLICY: Honesty is the best policy")
+	assert.Contains(t, out_result, "\t\tDEFENSE: Test honesty")
 }

@@ -192,7 +192,7 @@ func getContent(source sources.Source, path string) (map[string]string, error) {
 		return nil, err
 	}
 	if len(files) > 0 {
-		log.Print("Found", len(files), "file(s)")
+		log.Printf("Found %d file(s)", len(files))
 	}
 	for _, file := range files {
 		newContent, err := source.GetContent(file)

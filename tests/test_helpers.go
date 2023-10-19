@@ -3,7 +3,8 @@ package test
 import (
 	"args"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"log"
 	"os"
 )
 
@@ -35,6 +36,9 @@ type output_interceptor struct {
 
 	interceptRead_Err  *os.File
 	interceptWrite_Err *os.File
+
+	interceptRead_Log  *os.File
+	interceptWrite_Log *os.File
 }
 
 func (h *output_interceptor) Hook() {
@@ -43,22 +47,28 @@ func (h *output_interceptor) Hook() {
 
 	h.interceptRead_Out, h.interceptWrite_Out, _ = os.Pipe()
 	h.interceptRead_Err, h.interceptWrite_Err, _ = os.Pipe()
+	h.interceptRead_Log, h.interceptWrite_Log, _ = os.Pipe()
 
 	os.Stdout = h.interceptWrite_Out
 	os.Stderr = h.interceptWrite_Out
+	log.SetOutput(h.interceptWrite_Log)
 }
 
-func (h *output_interceptor) ReadAndRelease() (string, string) {
+func (h *output_interceptor) ReadAndRelease() (string, string, string) {
 	h.interceptWrite_Out.Close()
 	h.interceptWrite_Err.Close()
+	h.interceptWrite_Log.Close()
 
-	out, _ := ioutil.ReadAll(h.interceptRead_Out)
-	err, _ := ioutil.ReadAll(h.interceptRead_Err)
+	out, _ := io.ReadAll(h.interceptRead_Out)
+	err, _ := io.ReadAll(h.interceptRead_Err)
+	log, _ := io.ReadAll(h.interceptRead_Log)
 
 	os.Stdout = h.originalOut
+	os.Stderr = h.originalErr
 	os.Stderr = h.originalErr
 
 	h.interceptRead_Out.Close()
 	h.interceptRead_Err.Close()
-	return string(out), string(err)
+	h.interceptRead_Log.Close()
+	return string(out), string(err), string(log)
 }
