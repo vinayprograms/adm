@@ -12,3 +12,6 @@ export/defenses
 *.dot
 *.attack
 *.feature
+
+go.work
+go.work.sum
