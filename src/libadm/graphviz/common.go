@@ -64,6 +64,7 @@ func cleanup(str string) (cleanedStr string) {
 		">":  "gt",
 		"=":  "eq",
 		"\"": "\\\"",
+		"/": "_slash_",
 	}
 	for k, v := range replacements {
 		cleanedStr = strings.ReplaceAll(cleanedStr, k, v)
