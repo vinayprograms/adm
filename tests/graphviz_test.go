@@ -208,12 +208,12 @@ func getContentFromDirectory(source sources.Source, path string) ([]string, erro
 func getConfig() graphviz.GraphvizConfig {
 	return graphviz.GraphvizConfig{
 		Assumption: graphviz.NodeProperties{
-			Color: graphviz.ColorSet{FontColor: "white", FillColor: "dimgray", BorderColor: "dimgray"},
-			Font:  graphviz.TextProperties{FontName: "Times", FontSize: "18"},
+			Color: graphviz.ColorSet{FontColor: "brown", FillColor: "", BorderColor: "lightgray"},
+			Font:  graphviz.TextProperties{FontName: "Arial", FontSize: "14"},
 		},
 		Policy: graphviz.NodeProperties{
 			Color: graphviz.ColorSet{FontColor: "black", FillColor: "darkolivegreen3", BorderColor: "darkolivegreen3"},
-			Font:  graphviz.TextProperties{FontName: "Times", FontSize: "18"},
+			Font:  graphviz.TextProperties{FontName: "Arial", FontSize: "18"},
 		},
 		PreConditions: graphviz.NodeProperties{
 			Color: graphviz.ColorSet{FontColor: "black", FillColor: "lightgray", BorderColor: "gray"},
@@ -241,6 +241,10 @@ func getConfig() graphviz.GraphvizConfig {
 		},
 		EmptyAttack: graphviz.NodeProperties{
 			Color: graphviz.ColorSet{FontColor: "black", FillColor: "transparent", BorderColor: "red"},
+			Font:  graphviz.TextProperties{FontName: "Arial", FontSize: "16"},
+		},
+		UnMitigatedAttack: graphviz.NodeProperties{
+			Color: graphviz.ColorSet{FontColor: "red", FillColor: "yellow", BorderColor: "red"},
 			Font:  graphviz.TextProperties{FontName: "Arial", FontSize: "16"},
 		},
 

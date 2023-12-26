@@ -12,8 +12,9 @@ type GraphvizConfig struct {
 	IncidentResponse  NodeProperties
 	Attack            NodeProperties
 
-	EmptyDefense NodeProperties
-	EmptyAttack  NodeProperties
+	EmptyDefense      NodeProperties
+	EmptyAttack       NodeProperties
+	UnMitigatedAttack NodeProperties
 
 	Reality      NodeProperties
 	AttackerWins NodeProperties

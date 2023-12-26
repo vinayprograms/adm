@@ -3,17 +3,15 @@ package graphviz
 import "libadm/model"
 
 func BuildPolicySubgraph(p *model.Policy, config GraphvizConfig) (s subgraph) {
-	s.Init(p.Title, config.Policy, 1)
-	assumptionIDs := make(map[string]string)
-	for _, assumption := range p.Assumptions {
-		ss := BuildAssumptionSubgraph(assumption, config)
-		var key string
-		for key = range assumption.PreConditions {
-			break
-		}
-		assumptionIDs["cluster_"+generateID(ss.label)] = generateID(key)
-		s.AddSubgraph(&ss)
+
+	var allAssumptions []string
+	for _, a := range p.Assumptions {
+		allAssumptions = append(allAssumptions, CollectAssumptions(a)...)
 	}
+	title := buildTitleWithAssumptions(p.Title, allAssumptions, config)
+
+	s.Init(generateID(p.Title), title, config.Policy, 1)
+
 	for _, defense := range p.Defenses {
 		// add nodes
 		codeLines, defensePreConditions := GetDefenseCode(defense, config)
@@ -24,10 +22,6 @@ func BuildPolicySubgraph(p *model.Policy, config GraphvizConfig) (s subgraph) {
 		}
 		s.preConditions = append(s.preConditions, defensePreConditions...)
 
-		// add edges
-		for id, nodeKey := range assumptionIDs { // connect defense to all assumptions under this policy
-			connectAndAppend(s.Edges, nodeKey, generateID(defense.Title), "ltail="+id)
-		}
 		for _, pre := range defense.PreConditions {
 			if pre.Item == nil { // Precondition
 				connectAndAppend(s.Edges, "reality", generateID(pre.Step.Statement), "")

@@ -13,16 +13,16 @@ func GetDefenseCode(d *model.Defense, config GraphvizConfig) (codeLines map[stri
 	for title, p := range d.PreConditions {
 		if p.Item == nil { // add it only if precondition doesn't refer to another object (attack, defense, etc.)
 			preConditions = append(preConditions, generateID(title))
-			code := generateNodeSpec(p.Step.Statement, config.PreConditions, false)
+			code := generateNodeSpec(p.Step.Statement, config.PreConditions, false, false)
 			codeLines[generateID(title)] = "[" + strings.TrimSpace(code) + "]"
 		}
 	}
 	if len(d.PreConditions) == 0 && len(d.Actions) == 0 && len(d.Results) == 0 {
-		codeLines[generateID(d.Title)] = "[" + strings.TrimSpace(generateNodeSpec(d.Title, config.EmptyDefense, true)) + "]"
+		codeLines[generateID(d.Title)] = "[" + strings.TrimSpace(generateNodeSpec(d.Title, config.EmptyDefense, true, false)) + "]"
 	} else if isIncidentResponse(d) {
-		codeLines[generateID(d.Title)] = "[" + strings.TrimSpace(generateNodeSpec(d.Title, config.IncidentResponse, false)) + "]"
+		codeLines[generateID(d.Title)] = "[" + strings.TrimSpace(generateNodeSpec(d.Title, config.IncidentResponse, false, false)) + "]"
 	} else {
-		codeLines[generateID(d.Title)] = "[" + strings.TrimSpace(generateNodeSpec(d.Title, config.PreEmptiveDefense, false)) + "]"
+		codeLines[generateID(d.Title)] = "[" + strings.TrimSpace(generateNodeSpec(d.Title, config.PreEmptiveDefense, false, false)) + "]"
 	}
 
 	return

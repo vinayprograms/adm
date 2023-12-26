@@ -18,7 +18,7 @@ func connectAndAppend(edges map[string][]spec, source string, destination string
 }
 
 // Get graphviz code for a specific node (assumption/policy/pre-condition/attack/defense)
-func generateNodeSpec(title string, properties NodeProperties, isEmpty bool) (code string) {
+func generateNodeSpec(title string, properties NodeProperties, isEmpty bool, isUnmitigated bool) (code string) {
 	code = createProperty("label", wrap(title), false)
 	if isEmpty {
 		code += createProperty("shape", "box3d", false)
@@ -27,6 +27,11 @@ func generateNodeSpec(title string, properties NodeProperties, isEmpty bool) (co
 		code += createProperty("shape", "box", false)
 		code += createProperty("style", "filled, rounded", false)
 	}
+
+	if isUnmitigated {
+		code += createProperty("penwidth", "4", false)
+	}
+
 	code += createProperty("margin", "0.2", false)
 	code += properties.Font.Apply()
 	code += properties.Color.Apply()
@@ -64,7 +69,7 @@ func cleanup(str string) (cleanedStr string) {
 		">":  "gt",
 		"=":  "eq",
 		"\"": "\\\"",
-		"/": "_slash_",
+		"/":  "_slash_",
 	}
 	for k, v := range replacements {
 		cleanedStr = strings.ReplaceAll(cleanedStr, k, v)

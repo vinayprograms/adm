@@ -14,6 +14,7 @@ type spec struct {
 // Each member is a map connecting the specific graphviz line to the node it represents
 type subgraph struct {
 	label         string
+	labelText     string
 	properties    NodeProperties    // list of properties to set for this specific subgraph.
 	tabSpaceCount int               // for code beautification
 	subgraphs     []*subgraph       // sub-subgraphs
@@ -22,11 +23,12 @@ type subgraph struct {
 	Edges         map[string][]spec // maps a single source node ID to one or more destination node IDs.
 }
 
-func (s *subgraph) Init(title string, properties NodeProperties, tabcount int) error {
+func (s *subgraph) Init(id string, title string, properties NodeProperties, tabcount int) error {
 	if title == "" {
 		return errors.New("graphviz subgraph title cannot be empty")
 	}
-	s.label = title
+	s.label = id
+	s.labelText = title
 	s.properties = properties
 	s.tabSpaceCount = tabcount
 	if s.Nodes == nil {
@@ -55,7 +57,7 @@ func (s *subgraph) RemoveSubgraph(sub *subgraph) {
 func (s *subgraph) GenerateGraphvizNodes() (lines []string) {
 	lines = appendLine(lines, s.tabSpaceCount, "subgraph cluster_"+generateID(s.label)+" {")
 	lines = appendLine(lines, s.tabSpaceCount+1,
-		strings.TrimSpace(createProperty("label", "<<B>"+htmlwrap(s.label)+"</B>>", true)))
+		strings.TrimSpace(createProperty("label", "<"+s.labelText+">", true)))
 	lines = appendLine(lines, s.tabSpaceCount+1,
 		"graph[style=\"filled, rounded\" rankdir=\"LR\" splines=\"true\" overlap=\"false\" nodesep=\"0.2\" ranksep=\"0.9\""+
 			s.properties.Font.Apply()+
@@ -83,7 +85,7 @@ func (s *subgraph) GenerateGraphvizNodes() (lines []string) {
 	return
 }
 
-func (s *subgraph) GenerateGraphvizEdges(includeAttackerWins bool) (lines []string) {
+func (s *subgraph) GenerateGraphvizEdges() (lines []string) {
 	edges := s.GetUniqueEdges()
 	for id, destinations := range edges {
 		for _, dest := range destinations {
@@ -91,24 +93,6 @@ func (s *subgraph) GenerateGraphvizEdges(includeAttackerWins bool) (lines []stri
 				lines = appendLine(lines, s.tabSpaceCount, id+" -> "+dest.name+"["+dest.properties+"]")
 			} else {
 				lines = appendLine(lines, s.tabSpaceCount, id+" -> "+dest.name)
-			}
-		}
-	}
-
-	if includeAttackerWins {
-		// Add invisible edges from terminal nodes to attacker-wins.
-		// This aligns attacker-wins for better readability.
-		var terminalNodes []string
-		if len(s.subgraphs) > 0 {
-			for _, destinations := range edges {
-				for _, destination := range destinations {
-					if _, present := edges[destination.name]; !present { // if destination node has no successor, it is a terminal node.
-						terminalNodes = append(terminalNodes, destination.name)
-					}
-				}
-			}
-			for _, node := range terminalNodes {
-				lines = appendLine(lines, s.tabSpaceCount, node+" -> attacker_wins[style=\"invis\"]")
 			}
 		}
 	}

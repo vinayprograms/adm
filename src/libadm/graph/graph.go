@@ -6,16 +6,16 @@ import (
 )
 
 type Graph struct {
-	Models                   map[string]*model.Model
-	RealitySuccessors        map[string]interface{}
-	AttackerWinsPredecessors map[string]interface{}
+	Models             map[string]*model.Model
+	RealitySuccessors  map[string]interface{}
+	UnmitigatedAttacks map[string]interface{}
 }
 
 // A graph should atleast have one model
 func (g *Graph) Init() {
 	g.Models = make(map[string]*model.Model)
 	g.RealitySuccessors = make(map[string]interface{})
-	g.AttackerWinsPredecessors = make(map[string]interface{})
+	g.UnmitigatedAttacks = make(map[string]interface{})
 }
 
 func (g *Graph) AddModel(m *model.Model) error {
@@ -28,7 +28,7 @@ func (g *Graph) AddModel(m *model.Model) error {
 
 	// Add model to graph
 	g.ConnectToReality(m)
-	g.ConnectToAttackerWins(m)
+	g.CollectUnmitigatedAttacks(m)
 
 	g.Models[m.Title] = m
 
@@ -87,33 +87,33 @@ func (g *Graph) ConnectToReality(m *model.Model) error {
 	return nil
 }
 
-func (g *Graph) ConnectToAttackerWins(m *model.Model) {
+func (g *Graph) CollectUnmitigatedAttacks(m *model.Model) {
 	for title, attack := range m.Attacks {
 		if len(attack.PreConditions) == 0 && len(attack.Actions) == 0 && len(attack.Results) == 0 { // Empty specs cannot be considered
 			continue
-		} else if _, present := g.AttackerWinsPredecessors[title]; present { // if already listed
+		} else if _, present := g.UnmitigatedAttacks[title]; present { // if already listed
 			continue
 		}
 
-		attackerWins := false
+		isUnmitigated := false
 
-		// Attacks with "@success" tag are connected to "Attacker Wins" node
+		// Attacks with "@success" tag are considered unmitigated
 		if contains("@success", attack.Tags) {
-			attackerWins = true
-		} else if !isMitigated(attack, m.Defenses, m.Policies) { // if mitigated within the model
+			isUnmitigated = true
+		} else if !isMitigated(attack, m.Defenses, m.Policies) { // if unmitigated within the model
 			if len(g.Models) > 0 {
 				for _, other := range g.Models {
-					if !isMitigated(attack, other.Defenses, other.Policies) { // if mitigated across models
-						attackerWins = true
+					if !isMitigated(attack, other.Defenses, other.Policies) { // if unmitigated across models
+						isUnmitigated = true
 					}
 				}
 			} else {
-				attackerWins = true
+				isUnmitigated = true
 			}
 		}
 
-		if attackerWins {
-			g.AttackerWinsPredecessors[title] = attack
+		if isUnmitigated {
+			g.UnmitigatedAttacks[title] = attack
 		}
 	}
 }

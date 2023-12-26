@@ -100,7 +100,7 @@ func TestGraphWithFullModel(t *testing.T) {
 	assert.Equal(t, m.Policies["Honesty is the best policy"].Assumptions["Everyone is honest"], g.RealitySuccessors["Everyone is honest"])
 	assert.Equal(t, m.Attacks["Cheat on your friend"], g.RealitySuccessors["Cheat on your friend"])
 	// Check predecessors to 'attacker wins'
-	assert.Equal(t, m.Attacks["Cheat on your friend"], g.AttackerWinsPredecessors["Cheat on your friend"])
+	assert.Equal(t, m.Attacks["Cheat on your friend"], g.UnmitigatedAttacks["Cheat on your friend"])
 	// Check attack-defense relations
 	assert.Equal(t, m.Policies["Honesty is the best policy"].Defenses["Test honesty"].Actions["you are not sure about friend's honesty"].Item[0], m.Attacks["Cheat on your friend"])
 	assert.Equal(t, m.Defenses["Hide your cheat"].Actions["cheating is caught"].Item[0], m.Attacks["Friend's cheating is caught"])
@@ -192,8 +192,8 @@ func TestGraphWithTwoModels(t *testing.T) {
 	assert.Equal(t, g.RealitySuccessors["Adam cheats on Bob"], m1.Attacks["Adam cheats on Bob"])
 	assert.Equal(t, g.RealitySuccessors["Separate Charlie from others"], m2.Defenses["Separate Charlie from others"])
 	// Attacker Wins
-	assert.Equal(t, g.AttackerWinsPredecessors["Adam cheats on Bob"], m1.Attacks["Adam cheats on Bob"])
-	assert.Equal(t, g.AttackerWinsPredecessors["Charlie sows doubt"], m2.Attacks["Charlie sows doubt"])
+	assert.Equal(t, g.UnmitigatedAttacks["Adam cheats on Bob"], m1.Attacks["Adam cheats on Bob"])
+	assert.Equal(t, g.UnmitigatedAttacks["Charlie sows doubt"], m2.Attacks["Charlie sows doubt"])
 	// Model inter-connect
 	assert.Equal(t,
 		m2.Attacks["Charlie sows doubt"].Actions["Adam cooks-up a story to convince Bob"].Item[0],

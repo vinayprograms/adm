@@ -11,7 +11,7 @@ func GenerateGraphvizCode(g *graph.Graph, config GraphvizConfig) ([]string, erro
 	// Generate graphviz code
 	var lines []string
 
-	lines = append(lines, generateHeader("top", len(g.AttackerWinsPredecessors) > 0, config.Reality, config.AttackerWins)...)
+	lines = append(lines, generateHeader("top", config.Reality, config.AttackerWins)...)
 
 	lines = append(lines, generateBody(g, config)...)
 
@@ -23,7 +23,7 @@ func GenerateGraphvizCode(g *graph.Graph, config GraphvizConfig) ([]string, erro
 ////////////////////////////////////////
 // Internal functions
 
-func generateHeader(id string, includeAttackerWins bool, realityProperties NodeProperties, attackerWinsProperties NodeProperties) (header []string) {
+func generateHeader(id string, realityProperties NodeProperties, attackerWinsProperties NodeProperties) (header []string) {
 	header = appendLine(header, 0, "digraph \""+id+"\" {")
 	// digraph properties are indented by 1 tabspace
 	header = appendLine(header, 1, "// Base Styling")
@@ -32,25 +32,15 @@ func generateHeader(id string, includeAttackerWins bool, realityProperties NodeP
 	header = appendLineSpacer(header)
 	header = appendLine(header, 1, "// Start and end nodes")
 	header = appendLine(header, 1, realityProperties.Apply("reality", "Reality", "box"))
-	if includeAttackerWins {
-		header = appendLine(header, 1, attackerWinsProperties.Apply("attacker_wins", "ATTACKER WINS!", "box"))
-	}
 	return
 }
 
 func generateBody(g *graph.Graph, config GraphvizConfig) (lines []string) {
 	for _, m := range g.Models {
-		gvizModel := BuildModelSubGraph(m, config)
+		gvizModel := BuildModelSubGraph(m, g.UnmitigatedAttacks, config)
 		// generate code for the model.
 		lines = append(lines, gvizModel.GenerateGraphvizNodes()...)
-		lines = append(lines, gvizModel.GenerateGraphvizEdges(len(g.AttackerWinsPredecessors) > 0)...)
-	}
-	// add code for graph nodes that link to 'attacker wins'
-	for title := range g.AttackerWinsPredecessors {
-		lines = appendLine(lines, 1, generateID(title)+" -> attacker_wins["+
-			createProperty("penwidth", "4", false)+
-			createProperty("color", "red", false)+
-			"]")
+		lines = append(lines, gvizModel.GenerateGraphvizEdges()...)
 	}
 
 	return
@@ -61,8 +51,8 @@ func generateFooter() (footer []string) {
 	footer = appendLine(footer, 2, "label=\"Legend\"")
 	footer = appendLine(footer, 2, "graph[style=\"filled, rounded\" rankdir=\"LR\" fontsize=\"16\" splines=\"true\" overlap=\"false\" nodesep=\"0.1\" ranksep=\"0.2\" fontname=\"Courier\" fillcolor=\"lightyellow\" color=\"yellow\"];")
 	footer = appendLine(footer, 2, "A[label=\"Pre-\\nCondition\"  shape=\"box\"  style=\"filled, rounded\"  margin=\"0.2\"  fontname=\"Arial\"  fontsize=\"12\"  fontcolor=\"black\"  fillcolor=\"lightgray\"  color=\"gray\"]")
-	footer = appendLine(footer, 2, "B[label=\"Assumptions\"  shape=\"box\"  style=\"filled, rounded\"  margin=\"0.2\"  fontname=\"Arial\"  fontsize=\"12\"  fontcolor=\"white\"  fillcolor=\"dimgray\"  color=\"dimgray\"]")
-	footer = appendLine(footer, 2, "C[label=\"Attack\"  shape=\"box\"  style=\"filled, rounded\"  margin=\"0.2\"  fontname=\"Arial\"  fontsize=\"12\"  fontcolor=\"white\"  fillcolor=\"red\"  color=\"red\"]")
+	footer = appendLine(footer, 2, "B[label=\"Attack\"  shape=\"box\"  style=\"filled, rounded\"  margin=\"0.2\"  fontname=\"Arial\"  fontsize=\"12\"  fontcolor=\"white\"  fillcolor=\"red\"  color=\"red\"]")
+	footer = appendLine(footer, 2, "C[label=\"Unmitigated\\nAttack\"  shape=\"box\"  style=\"filled, rounded\"  margin=\"0.2\"  fontname=\"Arial\"  fontsize=\"12\"  fontcolor=\"red\"  fillcolor=\"yellow\"  color=\"red\" penwidth=\"4\"]")
 	footer = appendLine(footer, 2, "D[label=\"Pre-emptive\\nDefense\"  shape=\"box\"  style=\"filled, rounded\"  margin=\"0.2\"  fontname=\"Arial\"  fontsize=\"12\"  fontcolor=\"white\"  fillcolor=\"purple\"  color=\"blue\"]")
 	footer = appendLine(footer, 2, "E[label=\"Incident\\nResponse\"  shape=\"box\"  style=\"filled, rounded\"  margin=\"0.2\"  fontname=\"Arial\"  fontsize=\"12\"  fontcolor=\"white\"  fillcolor=\"blue\"  color=\"blue\"]")
 	footer = appendLine(footer, 2, "F[label=\"Policy\"  shape=\"box\"  style=\"filled, rounded\"  margin=\"0.2\"  fontname=\"Arial\"  fontsize=\"12\"  fontcolor=\"black\"  fillcolor=\"darkolivegreen3\"  color=\"darkolivegreen3\"]")
