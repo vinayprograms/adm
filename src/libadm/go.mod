@@ -1,4 +1,4 @@
-module libadm
+module github.com/vinayprograms/adm/libadm
 
 go 1.18
 
