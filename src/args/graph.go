@@ -20,9 +20,8 @@ func (g graphvizCommand) execute() error {
 		output := strings.Join(graphvizLines, "\n")
 		g.destination.WriteContent(g.outputPath, output)
 		return nil
-	} else {
-		return err
 	}
+	return err
 }
 
 // Prepare graphviz font and color specifications for different node types.
