@@ -17,3 +17,6 @@ export/defenses
 
 go.work
 go.work.sum
+
+.crush
+CRUSH.md
