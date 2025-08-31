@@ -1,0 +1,165 @@
+ideas:
+  - id: I001
+    title: Case-insensitive statement matching
+    description: Tool must provide a flag to perform case-insensitive statement matching.
+    elaboration: |
+      Currently, ADM tool performs exact string matching when connecting attacks and defenses through shared statements in Given/When/Then clauses. This strict matching can cause issues when the same concept is expressed with different capitalization across the model. A case-insensitive matching flag (e.g., `--ignore-case` or `-i`) would allow the tool to recognize connections even when statement casing differs.
+
+      The implementation would normalize all statement text to lowercase during the parsing phase when the flag is enabled, while preserving the original casing for display purposes. This would apply to all connection mechanisms: statement-based connections between attacks/defenses, assumption matching, and policy connections. The flag should be available across all sub-commands (stat, graph, export) to ensure consistent behavior.
+    examples:
+      - |
+        ```
+        # ADM model with different casing that should connect
+        Attack: Port scanning
+          When target is scanned for open TCP/UDP ports
+          Then list of open ports is revealed
+
+        Defense: Block port scans
+          When Target Is Scanned For Open TCP/UDP Ports
+          Then all scan attempts are blocked
+        ```
+        ```sh
+        # CLI usage with case-insensitive flag to connect them
+        adm graph --ignore-case model.adm
+        adm stat --ignore-case model.adm
+        ```
+      - |
+        ```
+        # Attack chaining with different casing
+        Attack: Gain initial access
+          Given target runs vulnerable service
+          When exploit is executed
+          Then shell access is obtained
+
+        Attack: Escalate privileges
+          Given shell access is obtained
+          When Shell Access Is Obtained
+          Then root privileges are gained
+        ```
+        ```sh
+        # Process with case-insensitive matching to connect the chain
+        adm graph --ignore-case privilege-escalation.adm
+        ```
+  - id: I002
+    title: Add 'name' extension to attacker and defender spec.
+    description: After 'As an attacker' and 'As a defender', include a 'named <name>' phrase to uniquely identify each attacker and defender participating in the model.
+    elaboration: |
+      Currently, ADM models support generic "As an attacker" and "As a defender" statements in the model header, but there's no way to distinguish between different types of attackers or defenders with varying capabilities, motivations, or access levels. Adding a "named <name>" extension would allow models to specify multiple distinct personas, making the threat modeling more granular and realistic.
+
+      The implementation would extend the parser to recognize the optional "named <name>" phrase following the role declaration. Individual attacks and defenses would then reference these named actors using an "@actor:<name>" tag or by including "Given <name> ..." in their Given clauses. This name would be stored as metadata and used in graph generation to visually distinguish different actors. When generating graphs or reports, each named actor could be represented with different colors, shapes, or labels to show which actor is responsible for each attack or defense.
+    examples:
+      - |
+        Model: Multi-actor web application security
+          As an attacker named "Script Kiddie"
+          I want to deface the website
+          So that I can gain notoriety
+
+          As an attacker named "Advanced Persistent Threat"
+          I want to steal customer data
+          So that I can sell it on dark markets
+
+          @actor:Script Kiddie
+          Attack: SQL injection attempt
+            Given web form accepts user input
+            When malicious SQL is entered
+            Then database error is revealed
+
+          @actor:Advanced Persistent Threat
+          Attack: Lateral movement
+            Given initial foothold is established
+            When network is scanned for targets
+            Then additional systems are compromised
+      - |
+        Model: Insider threat with role-based defenses
+          As an attacker named "Malicious Employee"
+          I want to access confidential files
+          So that I can sell company secrets
+
+          As a defender named "IT Security"
+          I want to monitor file access
+          So that I can detect unauthorized activities
+
+          Attack: Access restricted files
+            Given Malicious Employee has valid credentials
+            When confidential directory is accessed
+            Then sensitive files are downloaded
+
+          Defense: Monitor file access patterns
+            Given IT Security has monitoring tools deployed
+            When unusual file access is detected
+            Then security alert is generated
+  - id: I003
+    title: Filters
+    description: Add options to specify filters when rendering ADM specs. Filter can either be provided as CLI parameters or as a manifest file (with more advanced filtering specifications)
+    elaboration: |
+      Large ADM models can become overwhelming when visualized or analyzed in their entirety. Filtering capabilities would allow users to focus on specific aspects of the model by including or excluding certain attacks, defenses, actors, or tags. This would be particularly useful for presentations, focused analysis, or when working with complex multi-layered security models.
+
+      The implementation should support both simple CLI-based filters and advanced manifest-based filtering using a YAML or JSON configuration file. CLI filters include: `--include-tags`/`-t` (include specific tags), `--exclude-tags`/`-T` (exclude specific tags), `--include-attacks`/`-a` (include only attacks), `--exclude-attacks`/`-A` (exclude attacks), `--include-defenses`/`-d` (include only defenses), `--exclude-defenses`/`-D` (exclude defenses), `--actor-filter`/`-n` (filter by actor names), `--include-policies`/`-p` (include policies), `--exclude-policies`/`-P` (exclude policies), and `--filter`/`-f` (use manifest file). This allows flag merging like `-dA` to include defenses while excluding attacks. Manifest files would support complex boolean logic, pattern matching, and conditional filtering rules. When filters are applied, the tool should maintain relationship integrity and clearly indicate when connections are broken due to filtered elements.
+    examples:
+      - |
+        # CLI-based filtering examples
+        adm graph --include-tags="@ssh,@web" model.adm
+        adm graph -t "@ssh,@web" model.adm
+        adm stat --exclude-attacks --actor-filter="Script Kiddie" model.adm
+        adm stat -A -n "Script Kiddie" model.adm
+        adm export --include-defenses --exclude-tags="@experimental" model.adm
+        adm export -dT "@experimental" model.adm
+      - |
+        # Manifest-based filtering with filter.yaml
+        filters:
+          include:
+            tags: ["@critical", "@high-priority"]
+            actors: ["Advanced Persistent Threat", "Security Team"]
+            attack_patterns: [".*injection.*", ".*traversal.*"]
+          exclude:
+            tags: ["@deprecated", "@future"]
+            partial_specs: true
+        # CLI usage with manifest
+        adm graph --filter=filter.yaml complex-model.adm
+        adm export -f security-filters.yaml --output=filtered/ model.adm
+  - id: I004
+    title: External references
+    description: Show external references using different style - inverted colors or a style that indicates that it is incomplete and external. External references can also happen when specific attacks and defenses are filtered out from the output.
+  - id: I005
+    title: PDF reporting
+    description: Add PDF exporting option. It must include attacker and defender spec (including the 'name' extension) and the legend explaining the colors and styles.
+  - id: I006
+    title: Mermaid export
+    description: |-
+      In addition to Graphviz support Mermaid exporting.
+
+      NOTE: If mermaid support in Go is better than graphviz's, use it for generating PNG, JPG and SVG images
+  - id: I007
+    title: Add '@yolosec' tag
+    description: |-
+      An attack that doesn't have an associated defense, the tool must add this tag automatically to the path connecting the attack and 'initial state'.
+
+      Manually adding '@yolosec' indicates that even if defenses exist, the attack hasn't been handled completely.
+  - id: I008
+    title: User guide
+    description: Create detailed user guide on how to use code reading, semgrep and CodeQL to crete ADMs
+  - id: I009
+    title: Verbosity
+    description: |-
+      Using '-v', '-vv' or '-vvv' should increase verbosity of the tool's output. Additional verbosity must be output using common logging format so that log analytics tools can use it.
+
+      Verbosity must be supported in all sub commands.
+  - id: I010
+    title: Multi-file models
+    description: Models can be specified across multiple files. With that, tool must merge model contents including policies and assumptions. It is also possible that each part of a model - policy, assumptions, attacks and defenses are specified in separate files as a way to separate out different aspects of a model.
+  - id: I011
+    title: Support '@missing' tag for defenses
+    description: A defense with '@missing' tag indicates that its implementation is missing even though the specification explains the defense to be implemented.
+  - id: I012
+    title: Add Kelly's S3 example to the list of ADM examples
+  - id: I013
+    title: Add deciduous import / export option
+  - id: I014
+    title: BUSINESS MODEL
+    description: ADM/ADSM/ADDB will maintain a repo of checkers that will test the target based on the adm, technology or product used. It will connect to the target or run a agent on the target, identify potential vulnerabilities and test them based on associated content found inside ADDB.
+  - id: I015
+    title: Standard I/O
+    description: Accept ADM contents from STDIN and output transformation results to STDOUT
+  - id: I016
+    title: Add commonly used labels to README.md of the git repo.
+    description: Reference repos - https://github.com/charmbracelet/gum, https://github.com/quic-go/quic-go, https://github.com/s0rg/crawley, https://github.com/mikefarah/yq
